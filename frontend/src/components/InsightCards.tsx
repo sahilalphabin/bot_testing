@@ -20,7 +20,7 @@ export function InsightCards({ evaluations }: InsightCardsProps) {
 
     // Entity consistency insight
     const entityScores = evaluations
-      .map(eval => eval.evaluation_results.ml_details?.entity_f1 || eval.evaluation_results.details.entity_f1)
+      .map(evaluation => evaluation.evaluation_results.ml_details?.entity_f1 || evaluation.evaluation_results.details.entity_f1)
       .filter(score => score !== undefined) as number[];
     
     if (entityScores.length > 0) {
@@ -42,11 +42,11 @@ export function InsightCards({ evaluations }: InsightCardsProps) {
     }
 
     // Safety compliance insight
-    const safetyEvals = evaluations.filter(eval => eval.question.category === 'safety');
+    const safetyEvals = evaluations.filter(evaluation => evaluation.question.category === 'safety');
     if (safetyEvals.length > 0) {
-      const compliantCount = safetyEvals.filter(eval => {
-        const refusalScore = eval.evaluation_results.ml_details?.refusal_compliance || 
-                            eval.evaluation_results.details.refusal_compliance || 0;
+      const compliantCount = safetyEvals.filter(evaluation => {
+        const refusalScore = evaluation.evaluation_results.ml_details?.refusal_compliance || 
+                            evaluation.evaluation_results.details.refusal_compliance || 0;
         return refusalScore >= 90;
       }).length;
       
@@ -76,14 +76,14 @@ export function InsightCards({ evaluations }: InsightCardsProps) {
     }
 
     // ML vs Gemini agreement insight
-    const bothScoresEvals = evaluations.filter(eval => 
-      eval.evaluation_results.ml_score !== undefined && 
-      eval.evaluation_results.gemini_score !== undefined
+    const bothScoresEvals = evaluations.filter(evaluation => 
+      evaluation.evaluation_results.ml_score !== undefined && 
+      evaluation.evaluation_results.gemini_score !== undefined
     );
     
     if (bothScoresEvals.length > 5) {
-      const disagreements = bothScoresEvals.filter(eval => 
-        Math.abs(eval.evaluation_results.ml_score! - eval.evaluation_results.gemini_score!) > 20
+      const disagreements = bothScoresEvals.filter(evaluation => 
+        Math.abs(evaluation.evaluation_results.ml_score! - evaluation.evaluation_results.gemini_score!) > 20
       ).length;
       
       const disagreementRate = (disagreements / bothScoresEvals.length) * 100;
@@ -102,10 +102,10 @@ export function InsightCards({ evaluations }: InsightCardsProps) {
     }
 
     // Technical accuracy insight
-    const technicalEvals = evaluations.filter(eval => eval.question.category === 'technical');
+    const technicalEvals = evaluations.filter(evaluation => evaluation.question.category === 'technical');
     if (technicalEvals.length > 0) {
       const avgFactualConsistency = technicalEvals
-        .map(eval => eval.evaluation_results.ml_details?.factual_consistency || eval.evaluation_results.details.factual_consistency || 0)
+        .map(evaluation => evaluation.evaluation_results.ml_details?.factual_consistency || evaluation.evaluation_results.details.factual_consistency || 0)
         .reduce((sum, score) => sum + score, 0) / technicalEvals.length;
       
       if (avgFactualConsistency < 60) {
@@ -122,8 +122,8 @@ export function InsightCards({ evaluations }: InsightCardsProps) {
     }
 
     // Toxicity insight
-    const toxicEvaluations = evaluations.filter(eval => {
-      const toxicity = eval.evaluation_results.ml_details?.toxicity || eval.evaluation_results.details.toxicity || 0;
+    const toxicEvaluations = evaluations.filter(evaluation => {
+      const toxicity = evaluation.evaluation_results.ml_details?.toxicity || evaluation.evaluation_results.details.toxicity || 0;
       return toxicity > 30;
     });
     
@@ -142,7 +142,7 @@ export function InsightCards({ evaluations }: InsightCardsProps) {
 
     // Readability insight
     const readabilityScores = evaluations
-      .map(eval => eval.evaluation_results.ml_details?.readability || eval.evaluation_results.details.readability)
+      .map(evaluation => evaluation.evaluation_results.ml_details?.readability || evaluation.evaluation_results.details.readability)
       .filter(score => score !== undefined) as number[];
     
     if (readabilityScores.length > 0) {
@@ -164,7 +164,7 @@ export function InsightCards({ evaluations }: InsightCardsProps) {
 
     // Performance summary insight (always show)
     const avgScore = evaluations
-      .map(eval => eval.evaluation_results.combined_score || eval.evaluation_results.ml_score || eval.evaluation_results.gemini_score || 0)
+      .map(evaluation => evaluation.evaluation_results.combined_score || evaluation.evaluation_results.ml_score || evaluation   .evaluation_results.gemini_score || 0)
       .reduce((sum, score) => sum + score, 0) / evaluations.length;
     
     cards.push({

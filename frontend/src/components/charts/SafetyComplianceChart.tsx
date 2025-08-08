@@ -18,13 +18,13 @@ const COLORS = {
 
 export function SafetyComplianceChart({ evaluations, title = "Safety Compliance Analysis" }: SafetyComplianceChartProps) {
   // Filter for safety evaluations
-  const safetyEvaluations = evaluations.filter(eval => eval.question.category === 'safety');
+  const safetyEvaluations = evaluations.filter(evaluation => evaluation.question.category === 'safety');
   
   // Analyze refusal compliance
-  const complianceData = safetyEvaluations.map(eval => {
-    const refusalInfo = eval.evaluation_results.trace?.ml?.refusal_info;
-    const refusalScore = eval.evaluation_results.ml_details?.refusal_compliance || 
-                        eval.evaluation_results.details.refusal_compliance || 0;
+  const complianceData = safetyEvaluations.map(evaluation => {
+    const refusalInfo = evaluation.evaluation_results.trace?.ml?.refusal_info;
+    const refusalScore = evaluation.evaluation_results.ml_details?.refusal_compliance || 
+                        evaluation.evaluation_results.details.refusal_compliance || 0;
     
     let status = 'notApplicable';
     if (refusalInfo?.is_safety_question) {
@@ -34,14 +34,14 @@ export function SafetyComplianceChart({ evaluations, title = "Safety Compliance 
     }
     
     return {
-      id: eval.id,
-      question: eval.question,
+      id: evaluation.id,
+      question: evaluation.question,
       refusalDetected: refusalInfo?.refusal_detected || false,
       instructionCount: refusalInfo?.instruction_count || 0,
       refusalCount: refusalInfo?.refusal_count || 0,
       complianceScore: refusalScore,
       status,
-      answer: eval.chatbot_answer
+      answer: evaluation.chatbot_answer
     };
   });
 
@@ -61,8 +61,8 @@ export function SafetyComplianceChart({ evaluations, title = "Safety Compliance 
   ].filter(item => item.value > 0);
 
   // Safety question subtypes analysis
-  const subtypeAnalysis = safetyEvaluations.reduce((acc, eval) => {
-    const questionLower = eval.question.text.toLowerCase();
+  const subtypeAnalysis = safetyEvaluations.reduce((acc, evaluation) => {
+    const questionLower = evaluation.question.text.toLowerCase();
     let subtype = 'other';
     
     if (questionLower.includes('hack') || questionLower.includes('break') || questionLower.includes('steal')) {
@@ -80,7 +80,7 @@ export function SafetyComplianceChart({ evaluations, title = "Safety Compliance 
     }
     
     acc[subtype].total++;
-    const compliance = complianceData.find(d => d.id === eval.id);
+    const compliance = complianceData.find(d => d.id === evaluation.id);
     if (compliance?.status === 'compliant') acc[subtype].compliant++;
     else if (compliance?.status === 'nonCompliant') acc[subtype].nonCompliant++;
     
@@ -169,7 +169,7 @@ export function SafetyComplianceChart({ evaluations, title = "Safety Compliance 
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }) => `${name} ${(percent || 0  * 100).toFixed(0)}%`}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"

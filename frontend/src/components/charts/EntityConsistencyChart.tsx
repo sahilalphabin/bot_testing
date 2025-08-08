@@ -12,7 +12,7 @@ interface EntityConsistencyChartProps {
 export function EntityConsistencyChart({ evaluations, title = "Entity Consistency Distribution" }: EntityConsistencyChartProps) {
   // Process entity F1 scores into histogram bins
   const entityScores = evaluations
-    .map(eval => eval.evaluation_results.ml_details?.entity_f1 || eval.evaluation_results.details.entity_f1)
+    .map(evaluation => evaluation.evaluation_results.ml_details?.entity_f1 || evaluation.evaluation_results.details.entity_f1)
     .filter(score => score !== undefined && !isNaN(score)) as number[];
 
   const bins = [
@@ -40,16 +40,16 @@ export function EntityConsistencyChart({ evaluations, title = "Entity Consistenc
 
   // Get detailed missing entities info
   const missingEntitiesData = evaluations
-    .filter(eval => {
-      const missingCount = eval.evaluation_results.ml_metrics?.missing_entities_count || 0;
+    .filter(evaluation => {
+      const missingCount = evaluation.evaluation_results.ml_metrics?.missing_entities_count || 0;
       return missingCount > 0;
     })
-    .map(eval => ({
-      id: eval.id,
-      category: eval.question.category,
-      missingCount: eval.evaluation_results.ml_metrics?.missing_entities_count || 0,
-      entityF1: eval.evaluation_results.ml_details?.entity_f1 || eval.evaluation_results.details.entity_f1 || 0,
-      missingEntities: eval.evaluation_results.trace?.ml?.missing_entities || []
+    .map(evaluation => ({
+      id: evaluation.id,
+      category: evaluation.question.category,
+      missingCount: evaluation.evaluation_results.ml_metrics?.missing_entities_count || 0,
+      entityF1: evaluation.evaluation_results.ml_details?.entity_f1 || evaluation.evaluation_results.details.entity_f1 || 0,
+      missingEntities: evaluation.evaluation_results.trace?.ml?.missing_entities || []
     }))
     .sort((a, b) => b.missingCount - a.missingCount)
     .slice(0, 5); // Top 5 worst cases

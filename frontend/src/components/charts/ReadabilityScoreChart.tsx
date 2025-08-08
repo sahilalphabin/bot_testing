@@ -19,11 +19,11 @@ const categoryColors = {
 export function ReadabilityScoreChart({ evaluations, title = "Readability vs Combined Score" }: ReadabilityScoreChartProps) {
   // Prepare scatter plot data
   const scatterData: ScatterDataPoint[] = evaluations
-    .filter(eval => {
-      const readability = eval.evaluation_results.ml_details?.readability || eval.evaluation_results.details.readability;
-      const score = eval.evaluation_results.combined_score || 
-                   eval.evaluation_results.ml_score || 
-                   eval.evaluation_results.gemini_score;
+    .filter(evaluation => {
+      const readability = evaluation.evaluation_results.ml_details?.readability || evaluation.evaluation_results.details.readability;
+      const score = evaluation.evaluation_results.combined_score || 
+                   evaluation.evaluation_results.ml_score || 
+                   evaluation.evaluation_results.gemini_score;
       return readability !== undefined && score !== undefined;
     })
     .map((evaluation, index) => {
@@ -281,13 +281,13 @@ export function ReadabilityScoreChart({ evaluations, title = "Readability vs Com
                           </span>
                         </td>
                         <td className="p-2">
-                          {(item.clarity as number).toFixed(1)}
+                          {(item as any).clarity.toFixed(1)}
                         </td>
                         <td className="p-2 text-center">
                           <span className={`${
-                            (item.grammarErrors as number) > 3 ? 'text-red-600 font-medium' : 'text-gray-600'
+                            ((item as any).grammarErrors as number) > 3 ? 'text-red-600 font-medium' : 'text-gray-600'
                           }`}>
-                            {item.grammarErrors}
+                            {(item as any).grammarErrors}
                           </span>
                         </td>
                         <td className="p-2">

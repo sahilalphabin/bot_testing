@@ -121,9 +121,9 @@ export function exportToCSV(evaluations: Evaluation[], filename: string = 'evalu
       `"${(geminiMetrics.weaknesses as string[])?.join('; ') || ''}"`,
       geminiMetrics.hallucination_flags?.is_hallucinated || '',
       // Trace info
-      refusalInfo.refusal_detected || '',
-      refusalInfo.instruction_count || '',
-      `spaCy:${fallbacks.spacy_available || false} ROUGE:${fallbacks.rouge_available || false} VADER:${fallbacks.vader_available || false}`
+      (refusalInfo && typeof refusalInfo === 'object' && 'refusal_detected' in refusalInfo) ? (refusalInfo as any).refusal_detected || '' : '',
+      (refusalInfo && typeof refusalInfo === 'object' && 'instruction_count' in refusalInfo) ? (refusalInfo as any).instruction_count || '' : '',
+      `spaCy:${fallbacks && typeof fallbacks === 'object' && 'spacy_available' in fallbacks ? (fallbacks as any).spacy_available || false : false} ROUGE:${fallbacks && typeof fallbacks === 'object' && 'rouge_available' in fallbacks ? (fallbacks as any).rouge_available || false : false} VADER:${fallbacks && typeof fallbacks === 'object' && 'vader_available' in fallbacks ? (fallbacks as any).vader_available || false : false}`
     ];
   });
 

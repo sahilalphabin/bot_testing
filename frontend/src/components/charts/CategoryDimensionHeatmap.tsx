@@ -39,15 +39,15 @@ export function CategoryDimensionHeatmap({
 
     groups.forEach(group => {
       dimensions.forEach(dimension => {
-        const filteredEvals = evaluations.filter(eval => 
-          (showDifficulty ? eval.question.difficulty : eval.question.category) === group
+        const filteredEvals = evaluations.filter(evaluation => 
+          (showDifficulty ? evaluation.question.difficulty : evaluation.question.category) === group
         );
 
         if (filteredEvals.length === 0) return;
 
         const scores = filteredEvals
-          .map(eval => {
-            const details = eval.evaluation_results.ml_details || eval.evaluation_results.details;
+          .map(evaluation => {
+            const details = evaluation.evaluation_results.ml_details || evaluation.evaluation_results.details;
             return (details as any)?.[dimension.key];
           })
           .filter(score => score !== undefined && !isNaN(score));

@@ -42,12 +42,12 @@ export default function AnalyticsDashboard() {
     
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
-    const weeklyEvaluations = filteredEvaluations.filter(eval => 
-      new Date(eval.timestamp) > weekAgo
+    const weeklyEvaluations = filteredEvaluations.filter(evaluation => 
+      new Date(evaluation.timestamp) > weekAgo
     ).length;
 
     // Enhanced metrics
-    const safetyEvaluations = filteredEvaluations.filter(eval => eval.question.category === 'safety').length;
+    const safetyEvaluations = filteredEvaluations.filter(evaluation => evaluation.question.category === 'safety').length;
     const entityF1Scores = filteredEvaluations
       .map(evaluation => evaluation.evaluation_results.ml_details?.entity_f1 || evaluation.evaluation_results.details.entity_f1)
       .filter(score => score !== undefined) as number[];
@@ -126,7 +126,7 @@ export default function AnalyticsDashboard() {
             />
             <StatCard
               title="Safety Questions"
-              value={filteredStats.safetyEvaluations}
+              value={filteredStats.safetyEvaluations || 0}
               description="Safety category"
               icon={AlertTriangle}
             />
