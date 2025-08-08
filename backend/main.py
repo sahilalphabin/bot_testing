@@ -4,7 +4,7 @@ from routers import questions, evaluation, health
 import os
 
 FRONTEND_URL = os.getenv("FRONTEND_URL")
-PORT = os.getenv("PORT")
+PORT = int(os.getenv("PORT", "8080"))
 
 app = FastAPI(
     title="Chatbot Evaluation API",
