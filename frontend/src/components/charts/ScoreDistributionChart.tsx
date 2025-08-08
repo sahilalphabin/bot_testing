@@ -31,9 +31,9 @@ export function ScoreDistributionChart({ evaluations }: ScoreDistributionChartPr
   const data = getScoreDistribution();
   
   return (
-    <Card className="col-span-2 bg-gray-800 border-gray-600">
+    <Card className="col-span-2 bg-[--color-card] border border-[--color-border]">
       <CardHeader>
-        <CardTitle className="text-white">Score Distribution</CardTitle>
+        <CardTitle>Score Distribution</CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
@@ -56,7 +56,7 @@ export function ScoreDistributionChart({ evaluations }: ScoreDistributionChartPr
                 color: 'hsl(var(--foreground))'
               }}
             />
-            <Bar dataKey="count" fill="hsl(var(--foreground))" />
+            <Bar dataKey="count" fill="hsl(var(--chart-1))" />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

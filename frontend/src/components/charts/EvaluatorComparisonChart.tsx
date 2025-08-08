@@ -21,9 +21,9 @@ export function EvaluatorComparisonChart({ evaluations }: EvaluatorComparisonCha
   const data = getComparisonData().reverse();
 
   return (
-    <Card className="col-span-2 bg-gray-800 border-gray-600">
+    <Card className="col-span-2 bg-[--color-card] border border-[--color-border]">
       <CardHeader>
-        <CardTitle className="text-white">ML vs AI Evaluator Performance</CardTitle>
+        <CardTitle>ML vs AI Evaluator Performance</CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
@@ -50,21 +50,21 @@ export function EvaluatorComparisonChart({ evaluations }: EvaluatorComparisonCha
             <Line 
               type="monotone" 
               dataKey="ml_score" 
-              stroke="hsl(var(--foreground))" 
+              stroke="hsl(var(--chart-1))" 
               name="ML Score"
               strokeWidth={2}
             />
             <Line 
               type="monotone" 
               dataKey="gemini_score" 
-              stroke="hsl(var(--muted-foreground))" 
+              stroke="hsl(var(--chart-2))" 
               name="Gemini Score"
               strokeWidth={2}
             />
             <Line 
               type="monotone" 
               dataKey="combined_score" 
-              stroke="#6b7280" 
+              stroke="hsl(var(--chart-3))" 
               name="Combined Score"
               strokeWidth={2}
             />

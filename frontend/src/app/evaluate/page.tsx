@@ -34,6 +34,8 @@ export default function EvaluatePage() {
   const [generatedQuestions, setGeneratedQuestions] = useState<Question[]>([]);
   const [loadingNewQuestions, setLoadingNewQuestions] = useState<boolean>(false);
   const [questionMode, setQuestionMode] = useState<'custom' | 'predefined'>('predefined');
+  const [search, setSearch] = useState<string>("");
+  const [difficulty, setDifficulty] = useState<'easy'|'medium'|'hard'|'all'>('all');
   const [results, setResults] = useState<{
     ml_score?: number;
     gemini_score?: number;
@@ -195,7 +197,7 @@ export default function EvaluatePage() {
         
         <div className="flex-1 overflow-y-auto">
           <div className="p-8 h-full">
-            <div className="mb-6">
+            <div className="mb-6 sticky top-0 z-10 bg-[--color-background]/80 backdrop-blur supports-[backdrop-filter]:bg-[--color-background]/70">
               <h1 className="text-2xl font-bold">Evaluate Chatbot Response</h1>
               <p className="mt-1 text-[--color-muted-foreground]">
                 Compare chatbot answers against ground truth using ML/NLP and AI evaluation
@@ -219,11 +221,15 @@ export default function EvaluatePage() {
                           setQuestionMode('predefined');
                           setCustomQuestion('');
                         }}
-                        className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                          questionMode === 'predefined'
-                            ? 'bg-[--color-card] text-[--color-foreground]'
-                            : 'text-[--color-muted-foreground] hover:text-[--color-foreground]'
-                        }`}
+                        className={`px-3 py-1 text-sm rounded-md transition-colors border
+                          ${
+                            questionMode === 'predefined'
+                              ? 'bg-[--color-card] text-[--color-foreground] border-[--color-primary] border-2'
+                              : 'text-[--color-muted-foreground] hover:text-[--color-foreground] border-transparent'
+                          }`}
+                        style={{
+                          boxShadow: questionMode === 'predefined' ? '0 0 0 2px hsl(var(--primary))' : undefined
+                        }}
                       >
                         Predefined
                       </button>
@@ -233,20 +239,45 @@ export default function EvaluatePage() {
                           setQuestionMode('custom');
                           setSelectedQuestionId('');
                         }}
-                        className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                          questionMode === 'custom'
-                            ? 'bg-[--color-card] text-[--color-foreground]'
-                            : 'text-[--color-muted-foreground] hover:text-[--color-foreground]'
-                        }`}
+                        className={`px-3 py-1 text-sm rounded-md transition-colors border
+                          ${
+                            questionMode === 'custom'
+                              ? 'bg-[--color-card] text-[--color-foreground] border-[--color-primary] border-2'
+                              : 'text-[--color-muted-foreground] hover:text-[--color-foreground] border-transparent'
+                          }`}
+                        style={{
+                          boxShadow: questionMode === 'custom' ? '0 0 0 2px hsl(var(--primary))' : undefined
+                        }}
                       >
                         Custom
                       </button>
                     </div>
                   </div>
                   
-                  {/* Generate Questions Buttons */}
+                  {/* Predefined Controls */}
                   {questionMode === 'predefined' && (
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-3">
+                      <div className="flex gap-3">
+                        <Input
+                          value={search}
+                          onChange={(e) => setSearch(e.target.value)}
+                          placeholder="Search questions..."
+                          className="bg-[--color-input] border border-[--color-border]"
+                        />
+                        <Select value={difficulty} onValueChange={(v: any)=> setDifficulty(v)}>
+                          <SelectTrigger className="w-40 bg-[--color-input] border border-[--color-border]">
+                            <SelectValue placeholder="Difficulty" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All</SelectItem>
+                            <SelectItem value="easy">Easy</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="hard">Hard</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button type="button" variant="outline" className="border border-[--color-border]" onClick={() => generateNewQuestions('general')}>Refresh</Button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
                     <Button
                       type="button"
                       variant="outline"
@@ -287,6 +318,7 @@ export default function EvaluatePage() {
                       <Plus className="h-4 w-4 mr-2" />
                       Creative Tasks
                     </Button>
+                      </div>
                     </div>
                   )}
 
@@ -607,15 +639,15 @@ export default function EvaluatePage() {
 
       {/* Questions List Modal */}
       {showQuestionsList && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-950 rounded-lg max-w-4xl w-full max-h-[80vh] overflow-hidden border border-gray-800">
-            <div className="flex items-center justify-between p-6 border-b border-gray-800">
-              <h2 className="text-xl font-semibold text-white">Select a Test Question</h2>
+        <div className="fixed inset-0 bg-black/80 dark:bg-black/90 flex items-center justify-center p-4 z-50">
+          <div className="bg-[--color-card]/95 backdrop-blur-md rounded-lg max-w-4xl w-full max-h-[80vh] border border-[--color-border] shadow-lg text-white">
+            <div className="flex items-center justify-between p-6 border-b border-[--color-border]">
+              <h2 className="text-xl font-semibold">Select a Test Question</h2>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowQuestionsList(false)}
-                className="border-gray-700"
+                className="border border-[--color-border] text-white"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -624,8 +656,8 @@ export default function EvaluatePage() {
             <div className="p-6 overflow-y-auto max-h-[60vh]">
               {loadingNewQuestions ? (
                 <div className="text-center py-8">
-                  <Loader2 className="mx-auto h-8 w-8 animate-spin text-gray-400 mb-4" />
-                  <p className="text-gray-400">Generating questions...</p>
+                  <Loader2 className="mx-auto h-8 w-8 animate-spin text-[--color-muted-foreground] mb-4" />
+                  <p className="text-[--color-muted-foreground]">Generating questions...</p>
                 </div>
               ) : (
                 <div className="grid gap-3">
@@ -633,15 +665,15 @@ export default function EvaluatePage() {
                     <button
                       key={question.id}
                       onClick={() => selectQuestion(question)}
-                      className="text-left p-4 rounded-lg border border-gray-700 hover:bg-gray-800 hover:border-gray-600 transition-colors"
+                      className="text-left p-4 rounded-lg border border-[--color-border] hover:bg-[--color-muted] transition-colors text-white"
                     >
                       <div className="flex items-start justify-between mb-2">
-                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-800 text-gray-400">
+                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-[--color-muted] text-[--color-muted-foreground]">
                           {question.category} • {question.difficulty}
                         </span>
-                        <span className="text-xs text-gray-500">#{index + 1}</span>
+                        <span className="text-xs text-[--color-muted-foreground]">#{index + 1}</span>
                       </div>
-                      <p className="text-sm text-white leading-relaxed">{question.text}</p>
+                      <p className="text-sm leading-relaxed">{question.text}</p>
                     </button>
                   ))}
                 </div>
