@@ -189,31 +189,30 @@ export default function EvaluatePage() {
   };
 
   return (
-    <div className="flex h-screen bg-black">
+    <div className="flex h-screen bg-[--color-background] text-[--color-foreground]">
       {/* Left Panel - Form */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Navigation />
         
         <div className="flex-1 overflow-y-auto">
           <div className="p-8 h-full">
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-white">Evaluate Chatbot Response</h1>
-              <p className="mt-1 text-gray-400">
+              <h1 className="text-2xl font-bold">Evaluate Chatbot Response</h1>
+              <p className="mt-1 text-[--color-muted-foreground]">
                 Compare chatbot answers against ground truth using ML/NLP and AI evaluation
               </p>
             </div>
 
-            <Card className="h-full bg-gray-800 border-gray-700">
+            <Card className="h-full bg-[--color-card] border border-[--color-border]">
               <CardHeader>
-                <CardTitle className="text-xl font-semibold text-white">Chatbot Evaluation</CardTitle>
+                <CardTitle className="text-xl font-semibold">Chatbot Evaluation</CardTitle>
               </CardHeader>
               <CardContent className="h-full overflow-y-auto">
                 <form onSubmit={handleSubmit} className="space-y-6 h-full">
                 {/* Question Selection */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <Label className="text-base font-medium text-white">Test Question</Label>
-                    <div className="flex items-center space-x-2 bg-gray-700 rounded-lg p-1">
+                    <Label className="text-base font-medium">Test Question</Label>
+                    <div className="flex items-center space-x-2 bg-[--color-muted] rounded-lg p-1">
                       <button
                         type="button"
                         onClick={() => {
@@ -222,8 +221,8 @@ export default function EvaluatePage() {
                         }}
                         className={`px-3 py-1 text-sm rounded-md transition-colors ${
                           questionMode === 'predefined'
-                            ? 'bg-gray-800 text-white'
-                            : 'text-gray-400 hover:text-white'
+                            ? 'bg-[--color-card] text-[--color-foreground]'
+                            : 'text-[--color-muted-foreground] hover:text-[--color-foreground]'
                         }`}
                       >
                         Predefined
@@ -236,8 +235,8 @@ export default function EvaluatePage() {
                         }}
                         className={`px-3 py-1 text-sm rounded-md transition-colors ${
                           questionMode === 'custom'
-                            ? 'bg-gray-800 text-white'
-                            : 'text-gray-400 hover:text-white'
+                            ? 'bg-[--color-card] text-[--color-foreground]'
+                            : 'text-[--color-muted-foreground] hover:text-[--color-foreground]'
                         }`}
                       >
                         Custom
@@ -253,7 +252,7 @@ export default function EvaluatePage() {
                       variant="outline"
                       onClick={() => generateNewQuestions('general')}
                       disabled={loadingNewQuestions}
-                      className="justify-start h-12 border-gray-600 hover:bg-gray-700 text-white"
+                      className="justify-start h-12 border-[--color-border] hover:bg-[--color-muted]"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       General Knowledge
@@ -263,7 +262,7 @@ export default function EvaluatePage() {
                       variant="outline"
                       onClick={() => generateNewQuestions('safety')}
                       disabled={loadingNewQuestions}
-                      className="justify-start h-12 border-2 border-red-500 hover:bg-gray-700 text-white"
+                      className="justify-start h-12 border-2 border-red-500 hover:bg-[--color-muted]"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Safety Testing
@@ -273,7 +272,7 @@ export default function EvaluatePage() {
                       variant="outline"
                       onClick={() => generateNewQuestions('technical')}
                       disabled={loadingNewQuestions}
-                      className="justify-start h-12 border-gray-600 hover:bg-gray-700 text-white"
+                      className="justify-start h-12 border-[--color-border] hover:bg-[--color-muted]"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Technical Skills
@@ -283,7 +282,7 @@ export default function EvaluatePage() {
                       variant="outline"
                       onClick={() => generateNewQuestions('creative')}
                       disabled={loadingNewQuestions}
-                      className="justify-start h-12 border-gray-600 hover:bg-gray-700 text-white"
+                      className="justify-start h-12 border-[--color-border] hover:bg-[--color-muted]"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Creative Tasks
@@ -294,21 +293,21 @@ export default function EvaluatePage() {
                   {/* Custom Question */}
                   {questionMode === 'custom' && (
                     <div>
-                      <Label className="text-sm font-medium text-white">Enter your custom question:</Label>
+                      <Label className="text-sm font-medium">Enter your custom question:</Label>
                       <Input
                         value={customQuestion}
                         onChange={(e) => setCustomQuestion(e.target.value)}
                         placeholder="Type your custom test question here..."
-                        className="mt-2 bg-gray-700 border-gray-600 focus-visible:ring-blue-400 text-white placeholder:text-gray-400"
+                        className="mt-2 bg-[--color-input] border border-[--color-border] focus-visible:ring-[--color-ring] placeholder:text-[--color-muted-foreground]"
                       />
                     </div>
                   )}
 
                   {/* Selected Question Display */}
                   {(selectedQuestionId || (questionMode === 'custom' && customQuestion)) && (
-                    <div className="p-4 bg-gray-700 rounded-lg border border-gray-600">
-                      <Label className="text-sm font-medium text-gray-400">Selected Question:</Label>
-                      <p className="mt-1 text-sm text-white">
+                    <div className="p-4 bg-[--color-muted] rounded-lg border border-[--color-border]">
+                      <Label className="text-sm font-medium text-[--color-muted-foreground]">Selected Question:</Label>
+                      <p className="mt-1 text-sm">
                         {questionMode === 'predefined' && selectedQuestionId 
                           ? questions.find(q => q.id === selectedQuestionId)?.text || ''
                           : customQuestion
@@ -321,7 +320,7 @@ export default function EvaluatePage() {
                 {/* Answers */}
                 <div className="space-y-5">
                   <div>
-                    <Label htmlFor="chatbot-answer" className="text-base font-medium text-white">Chatbot Response</Label>
+                    <Label htmlFor="chatbot-answer" className="text-base font-medium">Chatbot Response</Label>
                     <Textarea
                       id="chatbot-answer"
                       value={chatbotAnswer}
@@ -329,12 +328,12 @@ export default function EvaluatePage() {
                       placeholder="Paste the chatbot's response here..."
                       rows={5}
                       required
-                      className="mt-2 resize-none bg-gray-700 border-gray-600 focus-visible:ring-blue-400 text-white placeholder:text-gray-400"
+                      className="mt-2 resize-none bg-[--color-input] border border-[--color-border] focus-visible:ring-[--color-ring] placeholder:text-[--color-muted-foreground]"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="manual-answer" className="text-base font-medium text-white">Expected Answer (Ground Truth)</Label>
+                    <Label htmlFor="manual-answer" className="text-base font-medium">Expected Answer (Ground Truth)</Label>
                     <Textarea
                       id="manual-answer"
                       value={manualAnswer}
@@ -342,16 +341,16 @@ export default function EvaluatePage() {
                       placeholder="Enter the correct/expected answer here..."
                       rows={5}
                       required
-                      className="mt-2 resize-none bg-gray-700 border-gray-600 focus-visible:ring-blue-400 text-white placeholder:text-gray-400"
+                      className="mt-2 resize-none bg-[--color-input] border border-[--color-border] focus-visible:ring-[--color-ring] placeholder:text-[--color-muted-foreground]"
                     />
                   </div>
                 </div>
 
                                 {/* Evaluation Type */}
                 <div>
-                  <Label className="text-base font-medium text-white">Evaluation Method</Label>
+                  <Label className="text-base font-medium">Evaluation Method</Label>
                   <Select value={evaluationType} onValueChange={(value: 'both' | 'ml' | 'gemini') => setEvaluationType(value)}>
-                    <SelectTrigger className="mt-2 bg-gray-700 border-gray-600 focus:ring-blue-400 text-white">
+                    <SelectTrigger className="mt-2 bg-[--color-input] border border-[--color-border] focus:ring-[--color-ring]">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -367,7 +366,7 @@ export default function EvaluatePage() {
                   <Button 
                     type="submit" 
                     disabled={isLoading || (!chatbotAnswer.trim() || !manualAnswer.trim() || (questionMode === 'predefined' ? !selectedQuestionId : !customQuestion.trim()))}
-                    className="flex-1 h-12 bg-blue-600 hover:bg-blue-700 text-white"
+                    className="flex-1 h-12 bg-[--color-primary] hover:opacity-90 text-[--color-primary-foreground]"
                   >
                     {isLoading ? (
                       <>
@@ -387,7 +386,7 @@ export default function EvaluatePage() {
                     variant="outline"
                     onClick={resetForm}
                     disabled={isLoading}
-                    className="px-6 border-gray-600 hover:bg-gray-700 text-white"
+                    className="px-6 border border-[--color-border] hover:bg-[--color-muted]"
                   >
                     Reset
                   </Button>
@@ -400,10 +399,10 @@ export default function EvaluatePage() {
       </div>
 
       {/* Right Panel - Results */}
-      <div className="flex-1 flex flex-col overflow-hidden border-l border-gray-800 bg-gray-900">
-        <div className="p-8 border-b border-gray-800">
-          <h2 className="text-2xl font-bold text-white">Evaluation Results</h2>
-          <p className="mt-1 text-gray-400">
+      <div className="flex-1 flex flex-col overflow-hidden border-l border-[--color-border] bg-[--color-card]">
+        <div className="p-8 border-b border-[--color-border]">
+          <h2 className="text-2xl font-bold">Evaluation Results</h2>
+          <p className="mt-1 text-[--color-muted-foreground]">
             Real-time analysis and scoring metrics
           </p>
         </div>
@@ -411,12 +410,12 @@ export default function EvaluatePage() {
         <div className="flex-1 overflow-y-auto p-8">
             {!results ? (
               <div className="flex items-center justify-center h-full">
-                <div className="text-center text-gray-400">
-                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gray-800 flex items-center justify-center">
-                    <Send className="h-10 w-10 text-gray-500" />
+                <div className="text-center text-[--color-muted-foreground]">
+                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[--color-muted] flex items-center justify-center">
+                    <Send className="h-10 w-10" />
                   </div>
-                  <p className="text-xl font-medium mb-2 text-white">Ready to Evaluate</p>
-                  <p className="text-sm text-gray-400">Fill out the form and click "Run Evaluation" to see results</p>
+                  <p className="text-xl font-medium mb-2">Ready to Evaluate</p>
+                  <p className="text-sm text-[--color-muted-foreground]">Fill out the form and click "Run Evaluation" to see results</p>
                 </div>
               </div>
             ) : (
@@ -424,46 +423,46 @@ export default function EvaluatePage() {
                 {/* Overall Scores */}
                 <div className="grid grid-cols-3 gap-6">
                   {results.ml_score !== undefined && (
-                    <div className="text-center p-8 bg-gray-800 rounded-2xl border border-gray-700">
-                      <div className="text-4xl font-bold text-white mb-2">{results.ml_score.toFixed(1)}</div>
-                      <div className="text-sm font-medium text-gray-400">ML/NLP Score</div>
+                    <div className="text-center p-8 bg-[--color-card] rounded-2xl border border-[--color-border]">
+                      <div className="text-4xl font-bold mb-2">{results.ml_score.toFixed(1)}</div>
+                      <div className="text-sm font-medium text-[--color-muted-foreground]">ML/NLP Score</div>
                     </div>
                   )}
                   
                   {results.gemini_score !== undefined && (
-                    <div className="text-center p-8 bg-gray-800 rounded-2xl border border-gray-700">
-                      <div className="text-4xl font-bold text-white mb-2">{results.gemini_score.toFixed(1)}</div>
-                      <div className="text-sm font-medium text-gray-400">AI Score</div>
+                    <div className="text-center p-8 bg-[--color-card] rounded-2xl border border-[--color-border]">
+                      <div className="text-4xl font-bold mb-2">{results.gemini_score.toFixed(1)}</div>
+                      <div className="text-sm font-medium text-[--color-muted-foreground]">AI Score</div>
                     </div>
                   )}
                   
                   {results.combined_score !== undefined && (
-                    <div className="text-center p-8 bg-gray-800 rounded-2xl border border-gray-700">
-                      <div className="text-4xl font-bold text-white mb-2">{results.combined_score.toFixed(1)}</div>
-                      <div className="text-sm font-medium text-gray-400">Combined Score</div>
+                    <div className="text-center p-8 bg-[--color-card] rounded-2xl border border-[--color-border]">
+                      <div className="text-4xl font-bold mb-2">{results.combined_score.toFixed(1)}</div>
+                      <div className="text-sm font-medium text-[--color-muted-foreground]">Combined Score</div>
                     </div>
                   )}
                 </div>
 
                 {/* Detailed Metrics */}
                 <div>
-                  <h3 className="text-xl font-semibold mb-6 text-white">Detailed Metrics</h3>
+                  <h3 className="text-xl font-semibold mb-6">Detailed Metrics</h3>
                   <div className="grid grid-cols-2 gap-6">
-                    <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
-                      <div className="text-sm font-medium text-gray-400 mb-2">Similarity</div>
-                      <div className="text-3xl font-bold text-white">{results.details.similarity.toFixed(1)}%</div>
+                    <div className="bg-[--color-card] p-6 rounded-xl border border-[--color-border]">
+                      <div className="text-sm font-medium text-[--color-muted-foreground] mb-2">Similarity</div>
+                      <div className="text-3xl font-bold">{results.details.similarity.toFixed(1)}%</div>
                     </div>
-                    <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
-                      <div className="text-sm font-medium text-gray-400 mb-2">Completeness</div>
-                      <div className="text-3xl font-bold text-white">{results.details.completeness.toFixed(1)}%</div>
+                    <div className="bg-[--color-card] p-6 rounded-xl border border-[--color-border]">
+                      <div className="text-sm font-medium text-[--color-muted-foreground] mb-2">Completeness</div>
+                      <div className="text-3xl font-bold">{results.details.completeness.toFixed(1)}%</div>
                     </div>
-                    <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
-                      <div className="text-sm font-medium text-gray-400 mb-2">Accuracy</div>
-                      <div className="text-3xl font-bold text-white">{results.details.accuracy.toFixed(1)}%</div>
+                    <div className="bg-[--color-card] p-6 rounded-xl border border-[--color-border]">
+                      <div className="text-sm font-medium text-[--color-muted-foreground] mb-2">Accuracy</div>
+                      <div className="text-3xl font-bold">{results.details.accuracy.toFixed(1)}%</div>
                     </div>
-                    <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
-                      <div className="text-sm font-medium text-gray-400 mb-2">Relevance</div>
-                      <div className="text-3xl font-bold text-white">{results.details.relevance.toFixed(1)}%</div>
+                    <div className="bg-[--color-card] p-6 rounded-xl border border-[--color-border]">
+                      <div className="text-sm font-medium text-[--color-muted-foreground] mb-2">Relevance</div>
+                      <div className="text-3xl font-bold">{results.details.relevance.toFixed(1)}%</div>
                     </div>
                   </div>
                 </div>

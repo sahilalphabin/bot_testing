@@ -185,7 +185,7 @@ export default function EvaluatePage() {
     <div className="flex h-screen bg-white dark:bg-black">
       {/* Left Panel - Form */}
       <div className="flex-1 flex flex-col overflow-hidden border-r border-gray-300 dark:border-gray-600">
-        <Navigation />
+        {/* <Navigation /> */}
         
         <div className="flex-1 overflow-y-auto">
           <div className="p-8 h-full">

@@ -1,6 +1,5 @@
 'use client';
 
-import { Navigation } from "@/components/Navigation";
 import { StatCard } from "@/components/StatCard";
 import { ScoreDistributionChart } from "@/components/charts/ScoreDistributionChart";
 import { EvaluatorComparisonChart } from "@/components/charts/EvaluatorComparisonChart";
@@ -19,16 +18,14 @@ export default function Dashboard() {
   }).length;
 
   return (
-    <div className="min-h-screen bg-black">
-      <Navigation />
-      
+    <div className="min-h-screen bg-[--color-background] text-[--color-foreground]">
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-              <p className="mt-1 text-gray-400">
+              <h1 className="text-3xl font-bold">Dashboard</h1>
+              <p className="mt-1 text-[--color-muted-foreground]">
                 Overview of chatbot evaluation results and performance metrics
               </p>
             </div>

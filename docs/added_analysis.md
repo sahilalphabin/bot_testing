@@ -1,15 +1,14 @@
-Absolutely—let’s do a **detailed brainstorming and planning** for an **elastic, scalable NLP + ML evaluation system without relying on PyTorch**.
+## Evaluation System – Detailed Documentation (No PyTorch)
 
-Below is a structured **list of capabilities, evaluation methods, and technology suggestions** you can incorporate.
-I’m assuming this is for evaluating chatbot or NLP model outputs (e.g., correctness, relevance, clarity, sentiment, toxicity).
+This document explains what we compute, how we compute it (lightweight ML + LLM judge), how the score is formed, and the exact API fields returned to the frontend.
 
 ---
 
-## 🎯 **1️⃣ Core Evaluation Dimensions**
+## 1) Core Evaluation Dimensions
 
-You can build these analyses modularly and elastically (scale them separately), and **combine them into composite scores.**
+All dimensions are normalized to 0–100 unless noted.
 
-### ✅ *A. Correctness*
+### A) Correctness (Similarity/Accuracy)
 
 * **What**: Whether the output matches factual ground truth or expected answers.
 * **How to do it**:
@@ -26,7 +25,7 @@ You can build these analyses modularly and elastically (scale them separately), 
 
 ---
 
-### ✅ *B. Relevance*
+### B) Relevance
 
 * **What**: Whether the output is on-topic and addresses the prompt.
 * **How to do it**:
@@ -42,7 +41,7 @@ You can build these analyses modularly and elastically (scale them separately), 
 
 ---
 
-### ✅ *C. Clarity & Readability*
+### C) Clarity & Readability
 
 * **What**: Whether the text is easy to read.
 * **How to do it**:
@@ -56,7 +55,7 @@ You can build these analyses modularly and elastically (scale them separately), 
 
 ---
 
-### ✅ *D. Factual Consistency*
+### D) Factual Consistency
 
 * **What**: Whether the content contradicts known facts.
 * **How to do it**:
@@ -71,7 +70,7 @@ You can build these analyses modularly and elastically (scale them separately), 
 
 ---
 
-### ✅ *E. Toxicity & Bias*
+### E) Toxicity & Bias
 
 * **What**: Whether the text contains hate speech, bias, offensive content.
 * **How to do it**:
@@ -86,7 +85,7 @@ You can build these analyses modularly and elastically (scale them separately), 
 
 ---
 
-### ✅ *F. Sentiment*
+### F) Sentiment
 
 * **What**: Emotional tone of the response.
 * **How to do it**:
@@ -101,7 +100,7 @@ You can build these analyses modularly and elastically (scale them separately), 
 
 ---
 
-### ✅ *G. Intent Matching*
+### G) Intent Matching
 
 * **What**: Whether output matches expected intent.
 * **How to do it**:
@@ -117,7 +116,7 @@ You can build these analyses modularly and elastically (scale them separately), 
 
 ---
 
-## 🛠️ **2️⃣ Elastic Architecture**
+## 2) Architecture & Components
 
 To **scale** evaluations dynamically, consider these components:
 
@@ -134,7 +133,7 @@ This way, **each evaluator** (e.g., Clarity, Sentiment) is a microservice.
 
 ---
 
-## 📈 **3️⃣ Additional Evaluation Capabilities You Can Add**
+## 3) Additional Capabilities
 
 Here’s a **checklist of extra modules** to consider building:
 
@@ -192,7 +191,7 @@ Here’s a **checklist of extra modules** to consider building:
 
 ---
 
-## 🧠 **4️⃣ Key Technologies (No Torch)**
+## 4) Technologies (No Torch)
 
 **Embedding + ML**:
 
@@ -226,7 +225,7 @@ Here’s a **checklist of extra modules** to consider building:
 
 ---
 
-## 💡 **5️⃣ Example Pipeline**
+## 5) Pipeline (end-to-end)
 
 Here’s a typical **evaluation flow**:
 
@@ -240,7 +239,7 @@ Here’s a typical **evaluation flow**:
 
 ---
 
-## 🔍 **6️⃣ Suggestions for Accuracy**
+## 6) Improving Accuracy & Reliability
 
 To **improve evaluation quality**, you can:
 
@@ -252,8 +251,75 @@ To **improve evaluation quality**, you can:
 
 ---
 
-## 📝 **Summary**
+## 7) API Schema & Returned Fields
 
+POST `/api/evaluate`
+
+Request
+```
+{
+  "question": string,
+  "chatbot_answer": string,
+  "manual_answer": string,
+  "evaluation_type": "ml" | "gemini" | "both" (optional, default "both")
+}
+```
+
+Response (core)
+```
+{
+  "ml_score": number | null,
+  "gemini_score": number | null,
+  "combined_score": number | null,
+  "details": { "similarity": number, "completeness": number, "accuracy": number, "relevance": number },
+  "explanations": { "ml_explanation": string, "gemini_explanation": string },
+  "processing_time": number
+}
+```
+
+Response (extended)
+```
+{
+  "ml_details": { similarity, accuracy, completeness, relevance, clarity, readability, toxicity, bias, sentiment, intent_match, factual_consistency },
+  "ml_metrics": { unified_similarity, method_scores, tfidf_sim, spacy_sim, jaccard, ngram_overlap, char_overlap, precision, recall, f1, readability_raw, grammar_errors, sentiment_compound, toxicity_hits, intent_probs, factual_hits_count },
+  "gemini_details": { similarity, accuracy, completeness, relevance, clarity, readability, toxicity, bias, sentiment, intent_match, factual_consistency },
+  "gemini_metrics": { method_scores, strengths, weaknesses },
+  "trace": { ml: { retrieval_hits, grammar_issues_count }, gemini: { top_k_evidence, hallucination_flags } },
+  "weights": { similarity, accuracy, completeness, relevance, readability, clarity, sentiment, toxicity, bias, intent_match, factual_consistency }
+}
+```
+
+Notes
+- `combined_score` currently averages the ML and Gemini overall scores when both are present. Guardrails already applied in the ML path (toxicity/factual caps). This can be replaced by a learned/calibrated scorer later.
+- Fields may be null if a path is disabled or the provider is unavailable.
+
+## 8) ML Evaluator Details
+File: `backend/services/ml_evaluator_lightweight.py`
+- Preprocessing: case-folding, cleanup, filler removal
+- Similarity: TF‑IDF cosine + spaCy (if available) + custom multi-metric → unified similarity
+- Accuracy: precision/recall/F1 + simple BLEU‑like
+- Completeness: manual coverage, question coverage, length adequacy, unique word ratio
+- Relevance: overlap + TF‑IDF + spaCy (if available)
+- Readability: textstat Flesch
+- Clarity: LanguageTool errors → clarity
+- Sentiment: VADER
+- Toxicity/Bias: heuristics
+- Factual: TF‑IDF similarity to manual/question; returns `retrieval_hits`
+- Scoring: weighted sum with penalties (toxicity/bias) and guardrails (caps)
+
+## 9) Gemini Evaluator Details
+File: `backend/services/gemini_evaluator.py`
+- Strict-JSON rubric with dimension scores, method_scores, strengths/weaknesses, evidence, hallucination_flags
+- Parser extracts/normalizes and provides structured `details`, `method_scores`, and evidence
+- Fallback to mock if API key missing
+
+## 10) Frontend Visualization
+- Evaluate page: scores, per-dimension details, method scores, evidence, radar and method charts, toxicity trend
+- Dashboard: KPI cards, distribution, ML vs AI chart; uses theme tokens for light/dark
+
+---
+
+This system is torch-free, explainable, and ready for incremental upgrades (RAG verification, learned scorer, self-consistency, calibration).
 You can build a robust, elastic NLP/ML evaluation system **without PyTorch** by combining:
 
 ✅ scikit-learn for classifiers

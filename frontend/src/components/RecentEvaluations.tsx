@@ -20,28 +20,28 @@ export function RecentEvaluations({ evaluations }: RecentEvaluationsProps) {
   const recentEvaluations = evaluations.slice(0, 5);
 
   return (
-    <Card className="bg-gray-800 border-gray-600">
+    <Card className="bg-[--color-card] border border-[--color-border]">
       <CardHeader>
-        <CardTitle className="text-white">Recent Evaluations</CardTitle>
+        <CardTitle>Recent Evaluations</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {recentEvaluations.length === 0 ? (
-            <p className="text-sm text-gray-400 text-center py-4">
-              No evaluations yet. <Link href="/evaluate" className="text-white hover:underline">Create your first evaluation</Link>
+            <p className="text-sm text-[--color-muted-foreground] text-center py-4">
+              No evaluations yet. <Link href="/evaluate" className="text-[--color-foreground] hover:underline">Create your first evaluation</Link>
             </p>
           ) : (
             recentEvaluations.map((evaluation) => (
-              <div key={evaluation.id} className="flex items-center justify-between p-3 rounded-lg border border-gray-600 bg-gray-700">
+              <div key={evaluation.id} className="flex items-center justify-between p-3 rounded-lg border border-[--color-border] bg-[--color-card]">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate text-white">
+                  <p className="text-sm font-medium truncate">
                     {evaluation.question.text}
                   </p>
                   <div className="flex items-center space-x-2 mt-1">
-                    <Badge variant="outline" className="text-xs border-gray-500 text-gray-300">
+                    <Badge variant="outline" className="text-xs">
                       {evaluation.question.category}
                     </Badge>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-[--color-muted-foreground]">
                       {new Date(evaluation.timestamp).toLocaleDateString()}
                     </span>
                   </div>
