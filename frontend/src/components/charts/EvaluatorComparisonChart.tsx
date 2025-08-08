@@ -58,7 +58,7 @@ export function EvaluatorComparisonChart({ evaluations }: EvaluatorComparisonCha
               type="monotone" 
               dataKey="gemini_score" 
               stroke="hsl(var(--chart-2))" 
-              name="Gemini Score"
+              name="AI Score"
               strokeWidth={2}
             />
             <Line 

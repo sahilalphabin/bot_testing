@@ -4,6 +4,7 @@ import "./globals.css";
 import { DataProvider } from "@/context/DataContext";
 import { ThemeProvider } from "next-themes";
 import { Navigation } from "@/components/Navigation";
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,10 +31,12 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen font-sans`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <DataProvider>
-            <div className="min-h-screen flex bg-[--color-background] text-[--color-foreground]">
-              <Navigation />
-              <main className="flex-1 min-w-0 bg-[--color-background]">{children}</main>
-            </div>
+            <NuqsAdapter>
+              <div className="min-h-screen flex bg-[--color-background] text-[--color-foreground]">
+                <Navigation />
+                <main className="flex-1 min-w-0 bg-[--color-background]">{children}</main>
+              </div>
+            </NuqsAdapter>
           </DataProvider>
         </ThemeProvider>
       </body>

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { BarChart3, FileEdit, Home, Settings } from 'lucide-react';
+import { BarChart3, FileEdit, Home, Settings, TrendingUp } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 
 export function Navigation() {
@@ -11,6 +11,7 @@ export function Navigation() {
 
   const navigation = [
     { name: 'Dashboard', href: '/', icon: Home, current: pathname === '/' },
+    { name: 'Analytics', href: '/analytics', icon: TrendingUp, current: pathname === '/analytics' },
     { name: 'Evaluate', href: '/evaluate', icon: FileEdit, current: pathname === '/evaluate' },
   ];
 

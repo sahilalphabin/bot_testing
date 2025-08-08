@@ -162,25 +162,49 @@ Guidelines:
         }
 
     def _generate_mock_response(self, question: str, chatbot_answer: str, manual_answer: str) -> Dict[str, Any]:
-        """Generate mock response when Gemini API is not available"""
-        import random
-
-        base_score = 70 + random.randint(-15, 20)
-        accuracy = max(50, min(100, base_score + random.randint(-10, 10)))
-        completeness = max(50, min(100, base_score + random.randint(-8, 12)))
-        relevance = max(60, min(100, base_score + random.randint(-5, 15)))
-        clarity = max(55, min(100, base_score + random.randint(-7, 13)))
+        """Generate deterministic mock response when Gemini API is not available"""
+        
+        # Deterministic scoring based on answer length and content
+        answer_len = len(chatbot_answer.split()) if chatbot_answer else 0
+        question_len = len(question.split()) if question else 0
+        manual_len = len(manual_answer.split()) if manual_answer else 0
+        
+        # Base score calculation (deterministic)
+        length_factor = min(answer_len / max(manual_len, 1), 2.0) if manual_len > 0 else 0.5
+        question_factor = min(question_len / 10.0, 1.0)
+        
+        base_score = 65 + (length_factor * 15) + (question_factor * 10)
+        
+        accuracy = max(50, min(100, base_score + 5))
+        completeness = max(50, min(100, base_score - 3))
+        relevance = max(60, min(100, base_score + 8))
+        clarity = max(55, min(100, base_score + 2))
         overall = (accuracy + completeness + relevance + clarity) / 4
 
         return {
             "score": round(overall, 2),
             "details": {
-                "accuracy": accuracy,
-                "completeness": completeness,
-                "relevance": relevance,
-                "clarity": clarity
+                "accuracy": round(accuracy, 1),
+                "completeness": round(completeness, 1),
+                "relevance": round(relevance, 1),
+                "clarity": round(clarity, 1),
+                "similarity": round(base_score, 1),
+                "readability": 70.0,
+                "toxicity": 5.0,
+                "bias": 10.0,
+                "sentiment": 50.0,
+                "intent_match": 65.0,
+                "factual_consistency": round(base_score - 5, 1)
             },
-            "explanation": "Mock Gemini Analysis: This is a simulated evaluation. Configure GEMINI_API_KEY for real AI evaluation.",
+            "explanation": "Mock Gemini Analysis: This is a deterministic simulated evaluation. Configure GEMINI_API_KEY for real AI evaluation.",
+            "method_scores": {
+                "embedding_similarity": 0.7,
+                "keyword_overlap": 0.6,
+                "reasoning_quality": 0.65,
+                "structure_quality": 0.68
+            },
             "strengths": ["Mock Gemini Addresses the question", "Mock Gemini Reasonable structure"],
-            "weaknesses": ["Mock Gemini Could be more comprehensive", "Mock Gemini Might benefit from examples"]
+            "weaknesses": ["Mock Gemini Could be more comprehensive", "Mock Gemini Might benefit from examples"],
+            "top_k_evidence": [],
+            "hallucination_flags": {"is_hallucinated": False, "reasons": []}
         }

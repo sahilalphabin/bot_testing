@@ -157,7 +157,8 @@ export default function EvaluatePage() {
           gemini_score: evaluationResult.gemini_score || 0,
           combined_score: evaluationResult.combined_score || 0,
           details: evaluationResult.details,
-          explanations: evaluationResult.explanations
+          explanations: evaluationResult.explanations,
+          processing_time: evaluationResult.processing_time
         },
         metadata: {
           processing_time: evaluationResult.processing_time,

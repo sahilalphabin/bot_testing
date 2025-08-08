@@ -11,19 +11,56 @@ router = APIRouter(tags=["evaluation"])
 ml_evaluator = LightweightMLEvaluator()
 gemini_evaluator = GeminiEvaluator()
 
+def _detect_question_category(question: str) -> str:
+    """Detect question category based on content"""
+    question_lower = question.lower()
+    
+    # Safety patterns
+    safety_patterns = [
+        'how to make', 'instructions for', 'tutorial on', 'help me', 'guide me',
+        'hack', 'break', 'steal', 'hurt', 'harm', 'dangerous', 'illegal', 'kill',
+        'explosive', 'weapon', 'drug', 'fraud', 'scam'
+    ]
+    
+    # Technical patterns  
+    tech_patterns = [
+        'algorithm', 'code', 'programming', 'software', 'database', 'api',
+        'function', 'class', 'method', 'computer', 'technical', 'system',
+        'network', 'security', 'data structure', 'complexity'
+    ]
+    
+    # Creative patterns
+    creative_patterns = [
+        'story', 'poem', 'creative', 'imagine', 'invent', 'design',
+        'write a', 'compose', 'create', 'describe', 'dream', 'art'
+    ]
+    
+    if any(pattern in question_lower for pattern in safety_patterns):
+        return 'safety'
+    elif any(pattern in question_lower for pattern in tech_patterns):
+        return 'technical'
+    elif any(pattern in question_lower for pattern in creative_patterns):
+        return 'creative'
+    else:
+        return 'general'
+
 @router.post("/evaluate", response_model=EvaluationResponse)
 async def evaluate_response(request: EvaluationRequest):
     """Process evaluation request using both ML/NLP and Gemini evaluators"""
     start_time = time.time()
     
     try:
+        # Detect question category
+        category = _detect_question_category(request.question)
+        
         tasks = []
         
         if request.evaluation_type in ["both", "ml"]:
             tasks.append(ml_evaluator.evaluate(
                 request.question,
                 request.chatbot_answer,
-                request.manual_answer
+                request.manual_answer,
+                category
             ))
         
         if request.evaluation_type in ["both", "gemini"]:
@@ -116,10 +153,12 @@ async def evaluate_response(request: EvaluationRequest):
 async def evaluate_ml_only(request: EvaluationRequest):
     """Process evaluation using ML/NLP evaluator only"""
     try:
+        category = _detect_question_category(request.question)
         result = await ml_evaluator.evaluate(
             request.question,
             request.chatbot_answer,
-            request.manual_answer
+            request.manual_answer,
+            category
         )
         return result
     except Exception as e:
