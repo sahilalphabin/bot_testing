@@ -4,7 +4,7 @@
 echo "Starting Chatbot Evaluation Backend..."
 
 # Navigate to backend directory
-cd backend
+# cd backend
 
 # Check if virtual environment exists
 if [ ! -d ".venv" ]; then
