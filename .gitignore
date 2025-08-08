@@ -66,6 +66,3 @@ coverage/
 dist/
 build/
 # End Generation Here
-
-start-backend.sh
-start-frontend.sh
