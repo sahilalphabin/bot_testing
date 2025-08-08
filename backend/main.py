@@ -4,7 +4,6 @@ from routers import questions, evaluation, health
 import os
 
 FRONTEND_URL = os.getenv("FRONTEND_URL")
-PORT = int(os.getenv("PORT", "8080"))
 
 app = FastAPI(
     title="Chatbot Evaluation API",
@@ -33,4 +32,4 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=PORT)
+    uvicorn.run(app, host="0.0.0.0")
