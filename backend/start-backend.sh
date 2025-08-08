@@ -14,4 +14,4 @@ nltk.download('stopwords', quiet=True)
 print('NLTK data setup complete')
 "
 
-python -m uvicorn main:app --reload --host 0.0.0.0 --port 8080
+python -m uvicorn main:app --reload --host 0.0.0.0 --port $PORT
