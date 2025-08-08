@@ -9,7 +9,7 @@ cd backend
 # Check if virtual environment exists
 if [ ! -d ".venv" ]; then
     echo "Creating virtual environment..."
-    python3 -m venv .venv
+    python -m venv .venv
 fi
 
 # Activate virtual environment
@@ -38,4 +38,4 @@ fi
 # Start the server
 echo "Starting FastAPI server on http://localhost:8080"
 echo "API documentation available at http://localhost:8080/docs"
-python3.10 -m uvicorn main:app --reload --host 0.0.0.0 --port 8080
+python -m uvicorn main:app --reload --host 0.0.0.0 --port 8080
