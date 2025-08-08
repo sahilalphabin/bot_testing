@@ -1,14 +1,45 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Evaluation } from '@/types';
+import { ChartSkeleton } from './ChartSkeleton';
+import { EmptyChart } from './EmptyChart';
+import { BarChart3 } from 'lucide-react';
 
 interface ScoreDistributionChartProps {
   evaluations: Evaluation[];
 }
 
 export function ScoreDistributionChart({ evaluations }: ScoreDistributionChartProps) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time for better UX
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [evaluations]);
+
+  // Show loading state
+  if (isLoading) {
+    return <ChartSkeleton title="Score Distribution" description="Processing score distribution data..." />;
+  }
+
+  // Show empty state if no data
+  if (evaluations.length === 0) {
+    return (
+      <EmptyChart 
+        title="Score Distribution"
+        description="No evaluation data available to show score distribution."
+        icon={BarChart3}
+      />
+    );
+  }
+
   const getScoreDistribution = () => {
     const ranges = [
       { range: '0-20', min: 0, max: 20 },

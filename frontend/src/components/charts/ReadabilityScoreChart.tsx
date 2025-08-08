@@ -1,8 +1,12 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, ReferenceLine } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Evaluation, ScatterDataPoint } from '@/types';
+import { ChartSkeleton } from './ChartSkeleton';
+import { EmptyChart } from './EmptyChart';
+import { FileText } from 'lucide-react';
 
 interface ReadabilityScoreChartProps {
   evaluations: Evaluation[];
@@ -17,6 +21,22 @@ const categoryColors = {
 };
 
 export function ReadabilityScoreChart({ evaluations, title = "Readability vs Combined Score" }: ReadabilityScoreChartProps) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time for better UX
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 650);
+
+    return () => clearTimeout(timer);
+  }, [evaluations]);
+
+  // Show loading state
+  if (isLoading) {
+    return <ChartSkeleton title={title} description="Analyzing readability patterns..." />;
+  }
+
   // Prepare scatter plot data
   const scatterData: ScatterDataPoint[] = evaluations
     .filter(evaluation => {
@@ -47,6 +67,17 @@ export function ReadabilityScoreChart({ evaluations, title = "Readability vs Com
         clarity: evaluation.evaluation_results.ml_details?.clarity || evaluation.evaluation_results.details.clarity || 0
       };
     });
+
+  // Show empty state if no data
+  if (scatterData.length === 0) {
+    return (
+      <EmptyChart 
+        title={title}
+        description="No readability data available. Readability analysis requires ML evaluation details."
+        icon={FileText}
+      />
+    );
+  }
 
   // Calculate correlation
   const calculateCorrelation = (data: ScatterDataPoint[]) => {

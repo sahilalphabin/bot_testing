@@ -1,8 +1,13 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Cell } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Evaluation, ScatterDataPoint } from '@/types';
+import { ChartSkeleton } from './ChartSkeleton';
+import { EmptyChart } from './EmptyChart';
+import { ChartSettings, type ChartConfiguration } from './ChartSettings';
+import { TrendingUp } from 'lucide-react';
 
 interface AgreementScatterChartProps {
   evaluations: Evaluation[];
@@ -17,12 +22,45 @@ const categoryColors = {
 };
 
 export function AgreementScatterChart({ evaluations, title = "ML vs AI Score Agreement" }: AgreementScatterChartProps) {
-  // Prepare scatter plot data
+  const [isLoading, setIsLoading] = useState(true);
+  const [chartConfig, setChartConfig] = useState<ChartConfiguration>({
+    showLegend: true,
+    showGrid: true,
+    showTooltips: true,
+    maxDataPoints: 100,
+    groupByCategory: true,
+    showTrendLine: false,
+    colorScheme: 'default',
+    chartHeight: 'medium',
+    hideEmptyCategories: false,
+    minThreshold: 0
+  });
+
+  useEffect(() => {
+    // Simulate loading time for better UX
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [evaluations]);
+
+  // Show loading state
+  if (isLoading) {
+    return <ChartSkeleton title={title} description="Loading ML vs AI score comparison data..." />;
+  }
+
+  // Prepare scatter plot data with configuration filters
   const scatterData: ScatterDataPoint[] = evaluations
     .filter(evaluation => 
       evaluation.evaluation_results.ml_score !== undefined && 
       evaluation.evaluation_results.gemini_score !== undefined
     )
+    .filter(evaluation => {
+      const score = evaluation.evaluation_results.combined_score || evaluation.evaluation_results.ml_score || 0;
+      return score >= chartConfig.minThreshold;
+    })
+    .slice(0, chartConfig.maxDataPoints)
     .map((evaluation, index) => ({
       x: evaluation.evaluation_results.ml_score!,
       y: evaluation.evaluation_results.gemini_score!,
@@ -49,6 +87,18 @@ export function AgreementScatterChart({ evaluations, title = "ML vs AI Score Agr
     
     return denominator === 0 ? 0 : numerator / denominator;
   };
+
+  // Show empty state if no data
+  if (scatterData.length === 0) {
+    return (
+      <EmptyChart 
+        title={title}
+        description="No evaluations found with both ML and AI scores"
+        icon={TrendingUp}
+        actionLabel="View All Data"
+      />
+    );
+  }
 
   const correlation = calculateCorrelation(scatterData);
 
@@ -84,46 +134,73 @@ export function AgreementScatterChart({ evaluations, title = "ML vs AI Score Agr
     return null;
   };
 
+  const getHeightClass = () => {
+    switch (chartConfig.chartHeight) {
+      case 'small': return 'h-64';
+      case 'large': return 'h-[600px]';
+      default: return 'h-96';
+    }
+  };
+
+  const handleExport = () => {
+    // Export chart as PNG (implementation would go here)
+    console.log('Exporting chart...');
+  };
+
+  const handleRefresh = () => {
+    setIsLoading(true);
+    setTimeout(() => setIsLoading(false), 500);
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>
-          Comparison of ML and Gemini evaluation scores. Points closer to the diagonal line indicate better agreement.
-          <div className="mt-2 flex gap-4 text-sm">
-            <span>Correlation: <strong>{correlation.toFixed(3)}</strong></span>
-            <span>Mean Disagreement: <strong>{mae.toFixed(1)}</strong></span>
-            <span>Data Points: <strong>{scatterData.length}</strong></span>
-          </div>
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="h-96">
-          <ResponsiveContainer width="100%" height="100%">
-            <ScatterChart
-              margin={{
-                top: 20,
-                right: 20,
-                bottom: 20,
-                left: 20,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                type="number" 
-                dataKey="x" 
-                name="ML Score"
-                domain={[0, 100]}
-                label={{ value: 'ML Score', position: 'insideBottom', offset: -10 }}
-              />
-              <YAxis 
-                type="number" 
-                dataKey="y" 
-                name="AI Score"
-                domain={[0, 100]}
-                label={{ value: 'AI Score', angle: -90, position: 'insideLeft' }}
-              />
-              <Tooltip content={<CustomTooltip />} />
+    <div className="space-y-4">
+      <ChartSettings
+        title={title}
+        settings={chartConfig}
+        onSettingsChange={setChartConfig}
+        onExport={handleExport}
+        onRefresh={handleRefresh}
+      />
+      
+      <Card>
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>
+            Comparison of ML and Gemini evaluation scores. Points closer to the diagonal line indicate better agreement.
+            <div className="mt-2 flex gap-4 text-sm">
+              <span>Correlation: <strong>{correlation.toFixed(3)}</strong></span>
+              <span>Mean Disagreement: <strong>{mae.toFixed(1)}</strong></span>
+              <span>Data Points: <strong>{scatterData.length}</strong></span>
+            </div>
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className={getHeightClass()}>
+            <ResponsiveContainer width="100%" height="100%">
+              <ScatterChart
+                margin={{
+                  top: 20,
+                  right: 20,
+                  bottom: 20,
+                  left: 20,
+                }}
+              >
+                {chartConfig.showGrid && <CartesianGrid strokeDasharray="3 3" />}
+                <XAxis 
+                  type="number" 
+                  dataKey="x" 
+                  name="ML Score"
+                  domain={[0, 100]}
+                  label={{ value: 'ML Score', position: 'insideBottom', offset: -10 }}
+                />
+                <YAxis 
+                  type="number" 
+                  dataKey="y" 
+                  name="AI Score"
+                  domain={[0, 100]}
+                  label={{ value: 'AI Score', angle: -90, position: 'insideLeft' }}
+                />
+                {chartConfig.showTooltips && <Tooltip content={<CustomTooltip />} />}
               
               {/* Perfect agreement line (y=x) */}
               <ReferenceLine 
@@ -151,24 +228,27 @@ export function AgreementScatterChart({ evaluations, title = "ML vs AI Score Agr
           </ResponsiveContainer>
         </div>
         
-        {/* Legend */}
-        <div className="mt-4 flex flex-wrap gap-4 justify-center">
-          {Object.entries(categoryColors).map(([category, color]) => {
-            const count = scatterData.filter(point => point.category === category).length;
-            if (count === 0) return null;
-            
-            return (
-              <div key={category} className="flex items-center gap-2 text-sm">
-                <div 
-                  className="w-3 h-3 rounded-full" 
-                  style={{ backgroundColor: color }}
-                />
-                <span className="capitalize">{category} ({count})</span>
+            {/* Legend */}
+            {chartConfig.showLegend && (
+              <div className="mt-4 flex flex-wrap gap-4 justify-center">
+                {Object.entries(categoryColors).map(([category, color]) => {
+                  const count = scatterData.filter(point => point.category === category).length;
+                  if (count === 0) return null;
+                  
+                  return (
+                    <div key={category} className="flex items-center gap-2 text-sm">
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: color }}
+                      />
+                      <span className="capitalize">{category} ({count})</span>
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
-        </div>
-      </CardContent>
-    </Card>
-  );
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    );
 }

@@ -1,8 +1,12 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Evaluation } from '@/types';
+import { ChartSkeleton } from './ChartSkeleton';
+import { EmptyChart } from './EmptyChart';
+import { Users } from 'lucide-react';
 
 interface EntityConsistencyChartProps {
   evaluations: Evaluation[];
@@ -10,6 +14,22 @@ interface EntityConsistencyChartProps {
 }
 
 export function EntityConsistencyChart({ evaluations, title = "Entity Consistency Distribution" }: EntityConsistencyChartProps) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time for better UX
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 550);
+
+    return () => clearTimeout(timer);
+  }, [evaluations]);
+
+  // Show loading state
+  if (isLoading) {
+    return <ChartSkeleton title={title} description="Processing entity consistency data..." />;
+  }
+
   // Process entity F1 scores into histogram bins
   const entityScores = evaluations
     .map(evaluation => evaluation.evaluation_results.ml_details?.entity_f1 || evaluation.evaluation_results.details.entity_f1)
@@ -37,6 +57,17 @@ export function EntityConsistencyChart({ evaluations, title = "Entity Consistenc
   const lowEntityF1Percentage = entityScores.length > 0 
     ? (lowEntityF1Count / entityScores.length) * 100
     : 0;
+
+  // Show empty state if no entity data
+  if (entityScores.length === 0) {
+    return (
+      <EmptyChart 
+        title={title}
+        description="No entity consistency data available. Entity analysis requires ML evaluation details."
+        icon={Users}
+      />
+    );
+  }
 
   // Get detailed missing entities info
   const missingEntitiesData = evaluations

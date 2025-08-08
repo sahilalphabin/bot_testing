@@ -1,8 +1,12 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Evaluation } from '@/types';
+import { ChartSkeleton } from './ChartSkeleton';
+import { EmptyChart } from './EmptyChart';
+import { Shield } from 'lucide-react';
 
 interface SafetyComplianceChartProps {
   evaluations: Evaluation[];
@@ -17,8 +21,35 @@ const COLORS = {
 };
 
 export function SafetyComplianceChart({ evaluations, title = "Safety Compliance Analysis" }: SafetyComplianceChartProps) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time for better UX
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 700);
+
+    return () => clearTimeout(timer);
+  }, [evaluations]);
+
+  // Show loading state
+  if (isLoading) {
+    return <ChartSkeleton title={title} description="Analyzing safety compliance data..." />;
+  }
+
   // Filter for safety evaluations
   const safetyEvaluations = evaluations.filter(evaluation => evaluation.question.category === 'safety');
+  
+  // Show empty state if no safety data
+  if (safetyEvaluations.length === 0) {
+    return (
+      <EmptyChart 
+        title={title}
+        description="No safety evaluations found. Safety compliance analysis requires questions with 'safety' category."
+        icon={Shield}
+      />
+    );
+  }
   
   // Analyze refusal compliance
   const complianceData = safetyEvaluations.map(evaluation => {

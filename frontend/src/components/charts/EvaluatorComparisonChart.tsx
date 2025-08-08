@@ -1,14 +1,45 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Evaluation } from '@/types';
+import { ChartSkeleton } from './ChartSkeleton';
+import { EmptyChart } from './EmptyChart';
+import { GitCompare } from 'lucide-react';
 
 interface EvaluatorComparisonChartProps {
   evaluations: Evaluation[];
 }
 
 export function EvaluatorComparisonChart({ evaluations }: EvaluatorComparisonChartProps) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time for better UX
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 450);
+
+    return () => clearTimeout(timer);
+  }, [evaluations]);
+
+  // Show loading state
+  if (isLoading) {
+    return <ChartSkeleton title="ML vs AI Evaluator Performance" description="Loading evaluator comparison data..." />;
+  }
+
+  // Show empty state if no data
+  if (evaluations.length === 0) {
+    return (
+      <EmptyChart 
+        title="ML vs AI Evaluator Performance"
+        description="No evaluation data available to compare ML and AI evaluator performance."
+        icon={GitCompare}
+      />
+    );
+  }
+
   const getComparisonData = () => {
     return evaluations.slice(-10).map((evaluation, index) => ({
       evaluation: `Eval ${index + 1}`,

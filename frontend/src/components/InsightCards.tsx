@@ -1,8 +1,9 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { AlertTriangle, TrendingUp, TrendingDown, AlertCircle, CheckCircle, Users } from 'lucide-react';
 import { Evaluation, InsightCard } from '@/types';
 
@@ -11,6 +12,17 @@ interface InsightCardsProps {
 }
 
 export function InsightCards({ evaluations }: InsightCardsProps) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate insight analysis time
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, [evaluations]);
+
   const insights = useMemo(() => {
     const cards: InsightCard[] = [];
 
@@ -225,6 +237,45 @@ export function InsightCards({ evaluations }: InsightCardsProps) {
           <CardDescription>No insights available with current data</CardDescription>
         </CardHeader>
       </Card>
+    );
+  }
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold">Key Insights</h3>
+          <Skeleton className="h-6 w-16" />
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <Card key={index}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-5 w-5 rounded-full" />
+                    <Skeleton className="h-5 w-32" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-4" />
+                    <Skeleton className="h-6 w-16" />
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-16" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-5 w-20" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
     );
   }
 

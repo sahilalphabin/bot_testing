@@ -1,8 +1,11 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Evaluation, HeatmapDataPoint } from '@/types';
+import { ChartSkeleton } from './ChartSkeleton';
+import { EmptyChart } from './EmptyChart';
+import { Grid } from 'lucide-react';
 
 interface CategoryDimensionHeatmapProps {
   evaluations: Evaluation[];
@@ -31,6 +34,27 @@ export function CategoryDimensionHeatmap({
   title = "Performance by Category & Dimension", 
   showDifficulty = false 
 }: CategoryDimensionHeatmapProps) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time for better UX
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 600);
+
+    return () => clearTimeout(timer);
+  }, [evaluations, showDifficulty]);
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <ChartSkeleton 
+        title={title} 
+        description={`Loading performance heatmap by ${showDifficulty ? 'difficulty' : 'category'}...`}
+        height="h-80"
+      />
+    );
+  }
   
   const heatmapData = useMemo(() => {
     const data: HeatmapDataPoint[] = [];
@@ -90,6 +114,18 @@ export function CategoryDimensionHeatmap({
   };
 
   const groups = showDifficulty ? difficulties : categories;
+
+  // Show empty state if no data
+  if (heatmapData.length === 0) {
+    return (
+      <EmptyChart 
+        title={title}
+        description={`No data available for ${showDifficulty ? 'difficulty' : 'category'} performance analysis`}
+        icon={Grid}
+        height="h-80"
+      />
+    );
+  }
 
   return (
     <Card>
