@@ -39,37 +39,74 @@ async def evaluate_response(request: EvaluationRequest):
         gemini_result = None
         
         if request.evaluation_type in ["both", "ml"]:
-            ml_result = results[0] if not isinstance(results[0], Exception) else None
+            candidate = results[0]
+            ml_result = candidate if not isinstance(candidate, Exception) else None
         
         if request.evaluation_type in ["both", "gemini"]:
-            gemini_result = results[-1] if not isinstance(results[-1], Exception) else None
+            candidate = results[-1]
+            gemini_result = candidate if not isinstance(candidate, Exception) else None
         
-        # Calculate combined score
+        # Calculate combined score (prefer ML weights if present)
         combined_score = None
         if ml_result and gemini_result:
-            combined_score = (ml_result["score"] + gemini_result["score"]) / 2
+            # If ML provides weights and details, compute a simple average of overall scores for now
+            combined_score = (ml_result.get("score", 0.0) + gemini_result.get("score", 0.0)) / 2
         elif ml_result:
-            combined_score = ml_result["score"]
+            combined_score = ml_result.get("score", None)
         elif gemini_result:
-            combined_score = gemini_result["score"]
+            combined_score = gemini_result.get("score", None)
         
         processing_time = time.time() - start_time
         
+        # Build extended fields safely
+        ml_details = ml_result.get("details") if ml_result else None
+        ml_metrics = ml_result.get("metrics") if ml_result else None
+        ml_trace = ml_result.get("trace") if ml_result else None
+        ml_weights = ml_result.get("weights") if ml_result else None
+
+        gem_details = gemini_result.get("details") if gemini_result else None
+        gem_metrics = None
+        if gemini_result:
+            gem_metrics = {
+                "method_scores": gemini_result.get("method_scores"),
+                "strengths": gemini_result.get("strengths"),
+                "weaknesses": gemini_result.get("weaknesses"),
+            }
+        gem_trace = None
+        if gemini_result:
+            gem_trace = {"gemini": {
+                "top_k_evidence": gemini_result.get("top_k_evidence"),
+                "hallucination_flags": gemini_result.get("hallucination_flags"),
+            }}
+
+        # Merge traces
+        merged_trace = {}
+        if ml_trace:
+            merged_trace.update(ml_trace)
+        if gem_trace:
+            merged_trace.update(gem_trace)
+
         return EvaluationResponse(
-            ml_score=ml_result["score"] if ml_result else None,
-            gemini_score=gemini_result["score"] if gemini_result else None,
+            ml_score=ml_result.get("score") if ml_result else None,
+            gemini_score=gemini_result.get("score") if gemini_result else None,
             combined_score=combined_score,
             details={
-                "similarity": ml_result["details"]["similarity"] if ml_result else 0.0,
-                "completeness": gemini_result["details"]["completeness"] if gemini_result else 0.0,
-                "accuracy": ml_result["details"]["accuracy"] if ml_result else 0.0,
-                "relevance": gemini_result["details"]["relevance"] if gemini_result else 0.0,
+                "similarity": (ml_details or {}).get("similarity", 0.0),
+                "completeness": (gem_details or {}).get("completeness", 0.0),
+                "accuracy": (ml_details or {}).get("accuracy", 0.0),
+                "relevance": (gem_details or {}).get("relevance", 0.0),
             },
             explanations={
-                "ml_explanation": ml_result["explanation"] if ml_result else "ML evaluation not performed",
-                "gemini_explanation": gemini_result["explanation"] if gemini_result else "Gemini evaluation not performed"
+                "ml_explanation": ml_result.get("explanation") if ml_result else "ML evaluation not performed",
+                "gemini_explanation": gemini_result.get("explanation") if gemini_result else "Gemini evaluation not performed"
             },
-            processing_time=processing_time
+            processing_time=processing_time,
+            ml_details=ml_details,
+            gemini_details=gem_details,
+            ml_metrics=ml_metrics,
+            gemini_metrics=gem_metrics,
+            trace=merged_trace or None,
+            weights=ml_weights
         )
         
     except Exception as e:

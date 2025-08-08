@@ -14,19 +14,19 @@ interface StatCardProps {
 
 export function StatCard({ title, value, description, icon: Icon, trend }: StatCardProps) {
   return (
-    <Card className="bg-stone-800 border-stone-700">
+    <Card className="bg-gray-800 border-gray-600">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-stone-400">{title}</CardTitle>
+        <CardTitle className="text-sm font-medium text-gray-400">{title}</CardTitle>
         {Icon && (
-          <div className="w-8 h-8 bg-stone-700 rounded-lg flex items-center justify-center">
-            <Icon className="h-4 w-4 text-stone-400" />
+          <div className="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center">
+            <Icon className="h-4 w-4 text-gray-400" />
           </div>
         )}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold text-stone-100">{value}</div>
+        <div className="text-2xl font-bold text-white">{value}</div>
         {description && (
-          <p className="text-xs text-stone-500 mt-1">{description}</p>
+          <p className="text-xs text-gray-500 mt-1">{description}</p>
         )}
         {trend && (
           <div className="flex items-center pt-1">
@@ -36,7 +36,7 @@ export function StatCard({ title, value, description, icon: Icon, trend }: StatC
                   ? "text-green-400"
                   : trend.value < 0
                   ? "text-red-400"
-                  : "text-stone-400"
+                  : "text-gray-400"
               }`}
             >
               {trend.value > 0 ? "+" : ""}{trend.value}% {trend.label}

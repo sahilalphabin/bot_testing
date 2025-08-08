@@ -20,28 +20,28 @@ export function RecentEvaluations({ evaluations }: RecentEvaluationsProps) {
   const recentEvaluations = evaluations.slice(0, 5);
 
   return (
-    <Card className="bg-stone-800 border-stone-700">
+    <Card className="bg-gray-800 border-gray-600">
       <CardHeader>
-        <CardTitle className="text-stone-100">Recent Evaluations</CardTitle>
+        <CardTitle className="text-white">Recent Evaluations</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {recentEvaluations.length === 0 ? (
-            <p className="text-sm text-stone-400 text-center py-4">
-              No evaluations yet. <Link href="/evaluate" className="text-blue-400 hover:underline">Create your first evaluation</Link>
+            <p className="text-sm text-gray-400 text-center py-4">
+              No evaluations yet. <Link href="/evaluate" className="text-white hover:underline">Create your first evaluation</Link>
             </p>
           ) : (
             recentEvaluations.map((evaluation) => (
-              <div key={evaluation.id} className="flex items-center justify-between p-3 rounded-lg border border-stone-600 bg-stone-700">
+              <div key={evaluation.id} className="flex items-center justify-between p-3 rounded-lg border border-gray-600 bg-gray-700">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate text-stone-100">
+                  <p className="text-sm font-medium truncate text-white">
                     {evaluation.question.text}
                   </p>
                   <div className="flex items-center space-x-2 mt-1">
-                    <Badge variant="outline" className="text-xs border-stone-500 text-stone-300">
+                    <Badge variant="outline" className="text-xs border-gray-500 text-gray-300">
                       {evaluation.question.category}
                     </Badge>
-                    <span className="text-xs text-stone-400">
+                    <span className="text-xs text-gray-400">
                       {new Date(evaluation.timestamp).toLocaleDateString()}
                     </span>
                   </div>

@@ -182,23 +182,23 @@ export default function EvaluatePage() {
   };
 
   return (
-    <div className="flex h-screen bg-black">
+    <div className="flex h-screen bg-white dark:bg-black">
       {/* Left Panel - Form */}
-      <div className="flex-1 flex flex-col overflow-hidden border-r border-gray-600">
+      <div className="flex-1 flex flex-col overflow-hidden border-r border-gray-300 dark:border-gray-600">
         <Navigation />
         
         <div className="flex-1 overflow-y-auto">
           <div className="p-8 h-full">
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-white">Evaluate Chatbot Response</h1>
-              <p className="mt-1 text-gray-400">
+              <h1 className="text-2xl font-bold text-black dark:text-white">Evaluate Chatbot Response</h1>
+              <p className="mt-1 text-gray-600 dark:text-gray-400">
                 Compare chatbot answers against ground truth using ML/NLP and AI evaluation
               </p>
             </div>
 
-            <Card className="h-full bg-gray-900 border-gray-600">
+            <Card className="h-full bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600">
               <CardHeader>
-                <CardTitle className="text-xl font-semibold text-white">Chatbot Evaluation</CardTitle>
+                <CardTitle className="text-xl font-semibold text-black dark:text-white">Chatbot Evaluation</CardTitle>
               </CardHeader>
               <CardContent className="h-full overflow-y-auto">
                 <form onSubmit={handleSubmit} className="space-y-6 h-full">
@@ -215,8 +215,8 @@ export default function EvaluatePage() {
                         }}
                         className={`px-4 py-2 text-sm rounded-md transition-colors ${
                           questionMode === 'predefined'
-                            ? 'bg-white text-black'
-                            : 'text-gray-400 hover:text-white'
+                            ? 'bg-black text-white dark:bg-white dark:text-black'
+                            : 'text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white'
                         }`}
                       >
                         Predefined
@@ -229,8 +229,8 @@ export default function EvaluatePage() {
                         }}
                         className={`px-4 py-2 text-sm rounded-md transition-colors ${
                           questionMode === 'custom'
-                            ? 'bg-white text-black'
-                            : 'text-gray-400 hover:text-white'
+                            ? 'bg-black text-white dark:bg-white dark:text-black'
+                            : 'text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white'
                         }`}
                       >
                         Custom

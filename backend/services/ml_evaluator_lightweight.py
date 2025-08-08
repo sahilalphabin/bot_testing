@@ -8,6 +8,17 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import textstat
+from contextlib import suppress
+
+try:
+    from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer  # type: ignore
+except Exception:
+    SentimentIntensityAnalyzer = None  # type: ignore
+
+try:
+    import language_tool_python  # type: ignore
+except Exception:
+    language_tool_python = None  # type: ignore
 
 class LightweightMLEvaluator:
     def __init__(self):
@@ -118,14 +129,43 @@ class LightweightMLEvaluator:
         completeness_score = self._calculate_completeness(chatbot_clean, manual_clean, question_clean)
         relevance_score = self._calculate_relevance(question_clean, chatbot_clean)
         readability_score = self._calculate_readability(chatbot_answer)
+
+        # Additional lightweight dimensions
+        clarity_score, grammar_issues_count = self._calculate_clarity(chatbot_answer)
+        sentiment_score, sentiment_compound = self._calculate_sentiment(chatbot_answer)
+        toxicity_score, toxicity_hits = self._estimate_toxicity(chatbot_answer)
+        bias_score = self._estimate_bias(chatbot_answer)
+        intent_match_score, intent_probs = self._estimate_intent(question_clean, chatbot_clean)
+        factual_consistency_score, retrieval_hits = self._estimate_factual_consistency(question_clean, chatbot_clean, manual_clean)
         
         # Calculate weighted overall score
+        weights = {
+            'similarity': 0.25,
+            'accuracy': 0.15,
+            'completeness': 0.15,
+            'relevance': 0.10,
+            'readability': 0.05,
+            'clarity': 0.10,
+            'sentiment': 0.05,
+            'toxicity': -0.10,
+            'bias': -0.05,
+            'intent_match': 0.05,
+            'factual_consistency': 0.15,
+        }
+
         overall_score = self._calculate_unified_score(
             unified_similarity,
             accuracy_score,
             completeness_score,
             relevance_score,
-            readability_score
+            readability_score,
+            clarity_score,
+            sentiment_score,
+            toxicity_score,
+            bias_score,
+            intent_match_score,
+            factual_consistency_score,
+            weights
         )
         
         # Generate explanation
@@ -137,21 +177,78 @@ class LightweightMLEvaluator:
             method_scores
         )
         
+        ml_details = {
+            "similarity": round(unified_similarity * 100, 2),
+            "accuracy": round(accuracy_score, 2),
+            "completeness": round(completeness_score, 2),
+            "relevance": round(relevance_score, 2),
+            "clarity": round(clarity_score, 2),
+            "readability": round(readability_score, 2),
+            "toxicity": round(toxicity_score, 2),
+            "bias": round(bias_score, 2),
+            "sentiment": round(sentiment_score, 2),
+            "intent_match": round(intent_match_score, 2),
+            "factual_consistency": round(factual_consistency_score, 2),
+        }
+
+        ml_metrics = {
+            "unified_similarity": round(unified_similarity, 4),
+            "readability_score": round(readability_score, 2),
+            "method_scores": {k: round(v, 4) for k, v in method_scores.items()},
+            "methods_used": len(similarities),
+            "tfidf_sim": round(tfidf_score, 4),
+            "spacy_sim": round(spacy_score, 4) if spacy_score is not None else None,
+            "precision": None,  # filled below
+            "recall": None,
+            "f1": None,
+            "jaccard": None,
+            "ngram_overlap": None,
+            "char_overlap": None,
+            "readability_raw": round(readability_score, 2),
+            "grammar_errors": grammar_issues_count,
+            "sentiment_compound": round(sentiment_compound, 4),
+            "toxicity_hits": toxicity_hits,
+            "intent_probs": intent_probs,
+            "factual_hits_count": len(retrieval_hits),
+        }
+
+        # Fill metric internals where computable
+        with suppress(Exception):
+            words1 = set(chatbot_clean.split()); words2 = set(manual_clean.split())
+            inter = len(words1.intersection(words2)); union = max(len(words1.union(words2)), 1)
+            jacc = inter / union
+            ml_metrics["jaccard"] = round(jacc, 4)
+        with suppress(Exception):
+            # 2-gram overlap as representative ngram measure
+            n1 = set(self._get_ngrams(chatbot_clean.split(), 2)); n2 = set(self._get_ngrams(manual_clean.split(), 2))
+            ml_metrics["ngram_overlap"] = round(len(n1.intersection(n2)) / max(len(n1.union(n2)), 1), 4)
+        with suppress(Exception):
+            # char overlap already done in custom similarity but compute again quickly
+            chars1 = set(chatbot_clean); chars2 = set(manual_clean)
+            ml_metrics["char_overlap"] = round(len(chars1.intersection(chars2)) / max(len(chars1.union(chars2)), 1), 4)
+        with suppress(Exception):
+            chatbot_words = set(chatbot_clean.split()); manual_words = set(manual_clean.split())
+            precision = len(chatbot_words.intersection(manual_words)) / max(len(chatbot_words), 1)
+            recall = len(chatbot_words.intersection(manual_words)) / max(len(manual_words), 1)
+            f1 = (2 * precision * recall) / max((precision + recall), 1e-6)
+            ml_metrics["precision"] = round(precision, 4)
+            ml_metrics["recall"] = round(recall, 4)
+            ml_metrics["f1"] = round(f1, 4)
+
+        trace = {
+            "ml": {
+                "retrieval_hits": retrieval_hits,
+                "grammar_issues_count": grammar_issues_count,
+            },
+        }
+
         return {
             "score": round(overall_score, 2),
-            "details": {
-                "similarity": round(unified_similarity * 100, 2),
-                "accuracy": round(accuracy_score, 2),
-                "completeness": round(completeness_score, 2),
-                "relevance": round(relevance_score, 2)
-            },
+            "details": ml_details,
             "explanation": explanation,
-            "metrics": {
-                "unified_similarity": round(unified_similarity, 4),
-                "readability_score": round(readability_score, 2),
-                "method_scores": {k: round(v, 4) for k, v in method_scores.items()},
-                "methods_used": len(similarities)
-            }
+            "metrics": ml_metrics,
+            "trace": trace,
+            "weights": weights,
         }
     
     def _preprocess_text(self, text: str) -> str:
@@ -401,27 +498,117 @@ class LightweightMLEvaluator:
             return 50.0
     
     def _calculate_unified_score(self, similarity: float, accuracy: float, 
-                               completeness: float, relevance: float, readability: float) -> float:
+                               completeness: float, relevance: float, readability: float,
+                               clarity: float, sentiment: float, toxicity: float, bias: float,
+                               intent_match: float, factual_consistency: float,
+                               weights: Dict[str, float]) -> float:
         """Calculate unified score using weighted average"""
-        
-        # Weights for different components
-        weights = {
-            'similarity': 0.35,
-            'accuracy': 0.25,
-            'completeness': 0.25,
-            'relevance': 0.10,
-            'readability': 0.05
-        }
-        
+        # Base weighted sum
         score = (
             similarity * 100 * weights['similarity'] +
             accuracy * weights['accuracy'] +
             completeness * weights['completeness'] +
             relevance * weights['relevance'] +
-            readability * weights['readability']
+            readability * weights['readability'] +
+            clarity * weights['clarity'] +
+            sentiment * weights['sentiment'] +
+            (100 - toxicity) * abs(weights['toxicity']) +  # penalize toxicity
+            (100 - bias) * abs(weights['bias']) +           # penalize bias
+            intent_match * weights['intent_match'] +
+            factual_consistency * weights['factual_consistency']
         )
-        
-        return min(max(score, 0.0), 100.0)
+
+        # Guardrails
+        if toxicity > 60:
+            score = min(score, 40.0)
+        if factual_consistency < 30:
+            score = min(score, 50.0)
+
+        return float(min(max(score, 0.0), 100.0))
+
+    def _calculate_clarity(self, text: str) -> tuple[float, int]:
+        """Estimate clarity via grammar error rate using LanguageTool if available."""
+        if not text:
+            return 0.0, 0
+        if language_tool_python is None:
+            return 70.0, 0
+        try:
+            tool = language_tool_python.LanguageToolPublicAPI('en-US')
+            matches = tool.check(text)
+            count = len(matches)
+            # Normalize to 0-100 where fewer errors -> higher clarity
+            length = max(len(text.split()), 1)
+            error_rate = count / length
+            clarity = max(0.0, 100.0 - min(100.0, error_rate * 400))
+            return clarity, count
+        except Exception:
+            return 70.0, 0
+
+    def _calculate_sentiment(self, text: str) -> tuple[float, float]:
+        """VADER sentiment mapped to 0-100."""
+        if not text or SentimentIntensityAnalyzer is None:
+            return 50.0, 0.0
+        try:
+            analyzer = SentimentIntensityAnalyzer()
+            compound = analyzer.polarity_scores(text).get('compound', 0.0)
+            score = (compound + 1) * 50.0
+            return float(score), float(compound)
+        except Exception:
+            return 50.0, 0.0
+
+    def _estimate_toxicity(self, text: str) -> tuple[float, list[str]]:
+        """Lightweight heuristic toxicity estimate using a small lexicon."""
+        if not text:
+            return 0.0, []
+        toxic_terms = [
+            "stupid","idiot","hate","kill","racist","sexist","dumb","trash","shut up"
+        ]
+        found = [w for w in toxic_terms if w in text.lower()]
+        score = min(100.0, len(found) * 15.0)
+        return score, found
+
+    def _estimate_bias(self, text: str) -> float:
+        """Very rough bias proxy via keyword hits; extend with better lists later."""
+        if not text:
+            return 0.0
+        biased_terms = ["always", "never", "obviously", "clearly"]
+        hits = sum(1 for w in biased_terms if w in text.lower())
+        return min(100.0, hits * 10.0)
+
+    def _estimate_intent(self, question: str, answer: str) -> tuple[float, Dict[str, float]]:
+        """Heuristic intent match: overlap-based probabilities among a small label set."""
+        labels = ["qa","safety","creative","technical"]
+        q = set(question.split()); a = set(answer.split())
+        probs = {
+            "qa": float(len(q.intersection(a)) / max(len(q), 1)),
+            "safety": 0.1 if any(w in a for w in ["danger","illegal","harm"]) else 0.0,
+            "creative": 0.2 if any(w in a for w in ["story","poem","creative"]) else 0.0,
+            "technical": 0.2 if any(w in a for w in ["algorithm","complexity","code","api"]) else 0.0,
+        }
+        # Normalize simplistic distribution
+        total = sum(probs.values()) or 1.0
+        probs = {k: v / total for k, v in probs.items()}
+        intent_match = probs.get("qa", 0.0) * 100.0
+        return intent_match, probs
+
+    def _estimate_factual_consistency(self, question: str, answer: str, manual: str) -> tuple[float, list[Dict[str, Any]]]:
+        """Quick retrieval proxy using TF-IDF over provided texts (manual as KB)."""
+        try:
+            docs = [manual, question]
+            if not any(docs):
+                return 50.0, []
+            vec = TfidfVectorizer(stop_words='english')
+            mat = vec.fit_transform(docs + [answer])
+            sim_to_manual = cosine_similarity(mat[2:3], mat[0:1])[0][0]
+            sim_to_question = cosine_similarity(mat[2:3], mat[1:2])[0][0]
+            score = float(np.mean([sim_to_manual, sim_to_question]) * 100.0)
+            hits = [
+                {"source": "manual", "title": "Ground Truth", "snippet": manual[:160], "score": round(sim_to_manual, 4)},
+                {"source": "question", "title": "Prompt", "snippet": question[:160], "score": round(sim_to_question, 4)},
+            ]
+            return score, hits
+        except Exception:
+            return 50.0, []
     
     def _generate_explanation(self, similarity: float, accuracy: float, 
                             completeness: float, relevance: float, method_scores: Dict[str, float]) -> str:

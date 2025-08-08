@@ -22,6 +22,12 @@ export interface EvaluationResponse {
     gemini_explanation: string;
   };
   processing_time: number;
+  ml_details?: Record<string, number>;
+  gemini_details?: Record<string, number>;
+  ml_metrics?: Record<string, any>;
+  gemini_metrics?: Record<string, any>;
+  trace?: Record<string, any>;
+  weights?: Record<string, number>;
 }
 
 export interface Question {

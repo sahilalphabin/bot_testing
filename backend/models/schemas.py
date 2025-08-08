@@ -33,6 +33,13 @@ class EvaluationResponse(BaseModel):
     details: EvaluationDetails
     explanations: EvaluationExplanations
     processing_time: float
+    # Extended analytics (optional for backward compatibility)
+    ml_details: Optional[Dict[str, float]] = None
+    gemini_details: Optional[Dict[str, float]] = None
+    ml_metrics: Optional[Dict[str, Any]] = None
+    gemini_metrics: Optional[Dict[str, Any]] = None
+    trace: Optional[Dict[str, Any]] = None
+    weights: Optional[Dict[str, float]] = None
 
 class QuestionGenerationRequest(BaseModel):
     category: str

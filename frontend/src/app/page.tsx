@@ -19,7 +19,7 @@ export default function Dashboard() {
   }).length;
 
   return (
-    <div className="min-h-screen bg-stone-900">
+    <div className="min-h-screen bg-black">
       <Navigation />
       
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -27,8 +27,8 @@ export default function Dashboard() {
         <div className="mb-8">
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-3xl font-bold text-stone-100">Dashboard</h1>
-              <p className="mt-1 text-stone-400">
+              <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+              <p className="mt-1 text-gray-400">
                 Overview of chatbot evaluation results and performance metrics
               </p>
             </div>

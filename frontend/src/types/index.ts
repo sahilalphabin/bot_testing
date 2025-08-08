@@ -19,6 +19,10 @@ export interface EvaluationResults {
     ml_explanation: string;
     gemini_explanation: string;
   };
+  ml_details?: Record<string, number>;
+  gemini_details?: Record<string, number>;
+  ml_metrics?: Record<string, any>;
+  gemini_metrics?: Record<string, any>;
 }
 
 export interface EvaluationMetadata {

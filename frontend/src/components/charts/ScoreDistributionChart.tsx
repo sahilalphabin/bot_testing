@@ -29,34 +29,34 @@ export function ScoreDistributionChart({ evaluations }: ScoreDistributionChartPr
   };
 
   const data = getScoreDistribution();
-
+  
   return (
-    <Card className="col-span-2 bg-stone-800 border-stone-700">
+    <Card className="col-span-2 bg-gray-800 border-gray-600">
       <CardHeader>
-        <CardTitle className="text-stone-100">Score Distribution</CardTitle>
+        <CardTitle className="text-white">Score Distribution</CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" className="opacity-30" stroke="#57534e" />
+            <CartesianGrid strokeDasharray="3 3" className="opacity-30" stroke="hsl(var(--border))" />
             <XAxis 
               dataKey="range" 
-              stroke="#a8a29e"
+              stroke="hsl(var(--muted-foreground))"
               fontSize={12}
             />
             <YAxis 
-              stroke="#a8a29e"
+              stroke="hsl(var(--muted-foreground))"
               fontSize={12}
             />
             <Tooltip 
               contentStyle={{
-                backgroundColor: '#292524',
-                border: '1px solid #57534e',
+                backgroundColor: 'hsl(var(--background))',
+                border: '1px solid hsl(var(--border))',
                 borderRadius: '6px',
-                color: '#f5f5f4'
+                color: 'hsl(var(--foreground))'
               }}
             />
-            <Bar dataKey="count" fill="#3b82f6" />
+            <Bar dataKey="count" fill="hsl(var(--foreground))" />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>
