@@ -1,0 +1,68 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# FastAPI / Python environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.env
+*.env.*
+
+# FastAPI logs
+*.log
+
+# FastAPI database
+*.sqlite3
+*.db
+
+# FastAPI migrations
+alembic/
+migrations/
+
+# Next.js build output
+.next/
+out/
+
+# Next.js static exports
+out/
+
+# Node modules
+node_modules/
+
+# Bun cache
+.bun/
+
+# Shadecn (if using local cache or build)
+.shadcn/
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+bun.lockb
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test coverage
+coverage/
+*.cover
+*.py,cover
+
+# Misc
+dist/
+build/
+# End Generation Here
