@@ -45,20 +45,9 @@ export function CategoryDimensionHeatmap({
     return () => clearTimeout(timer);
   }, [evaluations, showDifficulty]);
 
-  // Show loading state
-  if (isLoading) {
-    return (
-      <ChartSkeleton 
-        title={title} 
-        description={`Loading performance heatmap by ${showDifficulty ? 'difficulty' : 'category'}...`}
-        height="h-80"
-      />
-    );
-  }
-  
+  // Compute heatmap data unconditionally to keep hook order stable
   const heatmapData = useMemo(() => {
     const data: HeatmapDataPoint[] = [];
-    const groupKey = showDifficulty ? 'difficulty' : 'category';
     const groups = showDifficulty ? difficulties : categories;
 
     groups.forEach(group => {
@@ -79,7 +68,6 @@ export function CategoryDimensionHeatmap({
         if (scores.length === 0) return;
 
         const avgScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
-        
         data.push({
           category: group,
           dimension: dimension.label,
@@ -92,6 +80,17 @@ export function CategoryDimensionHeatmap({
     return data;
   }, [evaluations, showDifficulty]);
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <ChartSkeleton 
+        title={title} 
+        description={`Loading performance heatmap by ${showDifficulty ? 'difficulty' : 'category'}...`}
+        height="h-80"
+      />
+    );
+  }
+  
   // Get value range for color scaling
   const minValue = Math.min(...heatmapData.map(d => d.value));
   const maxValue = Math.max(...heatmapData.map(d => d.value));
