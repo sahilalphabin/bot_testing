@@ -55,14 +55,6 @@ export function Navigation() {
           })}
         </ul>
       </nav>
-
-      {/* Footer actions */}
-      <div className="p-3 border-t border-[--color-border] space-y-2">
-        <Button variant="ghost" className="w-full justify-center">
-          <Settings className="h-4 w-4 mr-2" />
-          <span>Settings</span>
-        </Button>
-      </div>
     </aside>
   );
 }

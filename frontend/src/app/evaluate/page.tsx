@@ -192,12 +192,12 @@ export default function EvaluatePage() {
   };
 
   return (
-    <div className="flex h-screen bg-[--color-background] text-[--color-foreground]">
+    <div className="flex h-[100dvh] overflow-hidden bg-[--color-background] text-[--color-foreground]">
       {/* Left Panel - Form */}
       <div className="flex-1 flex flex-col overflow-hidden">
         
         <div className="flex-1 overflow-y-auto">
-          <div className="p-8 h-full">
+          <div className="p-8 box-border">
             <div className="mb-6 sticky top-0 z-10 bg-[--color-background]/80 backdrop-blur supports-[backdrop-filter]:bg-[--color-background]/70">
               <h1 className="text-2xl font-bold">Evaluate Chatbot Response</h1>
               <p className="mt-1 text-[--color-muted-foreground]">
@@ -386,8 +386,9 @@ export default function EvaluatePage() {
                 <div className="flex gap-3 pt-4">
                   <Button 
                     type="submit" 
+                    variant="default"
                     disabled={isLoading || (!chatbotAnswer.trim() || !manualAnswer.trim() || (questionMode === 'predefined' ? !selectedQuestionId : !customQuestion.trim()))}
-                    className="flex-1 h-12 bg-[--color-primary] hover:opacity-90 text-[--color-primary-foreground]"
+                    className="flex-1 h-12"
                   >
                     {isLoading ? (
                       <>
@@ -407,7 +408,7 @@ export default function EvaluatePage() {
                     variant="outline"
                     onClick={resetForm}
                     disabled={isLoading}
-                    className="px-6 border border-[--color-border] hover:bg-[--color-muted]"
+                    className="px-6"
                   >
                     Reset
                   </Button>
@@ -493,16 +494,16 @@ export default function EvaluatePage() {
                   <div className="grid grid-cols-2 gap-6">
                     {/* ML Details */}
                     {results.ml_details && (
-                      <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
-                        <div className="flex items-center justify-between mb-4">
-                          <h4 className="text-lg font-semibold text-white">ML Details</h4>
-                          <span className="text-xs text-gray-400">weights-aware</span>
+                      <div className="p-6 rounded-xl border border-[--color-border]">
+                        <div className="flex items-center justify-between mb-4 text-[--color-muted-foreground]">
+                          <h4 className="text-lg">ML Details</h4>
+                          <span className="text-xs text-[--color-muted-foreground]">weights-aware</span>
                         </div>
                         <div className="grid grid-cols-2 gap-3 text-sm">
                           {Object.entries(results.ml_details).map(([k, v]) => (
-                            <div key={k} className="flex items-center justify-between text-gray-300">
+                            <div key={k} className="flex items-center justify-between text-[--color-muted-foreground]">
                               <span className="capitalize">{k.replace(/_/g, ' ')}</span>
-                              <span className="text-white font-medium">{Number(v).toFixed(1)}</span>
+                              <span className="font-medium">{Number(v).toFixed(1)}</span>
                             </div>
                           ))}
                         </div>
@@ -511,16 +512,16 @@ export default function EvaluatePage() {
 
                     {/* Gemini Details */}
                     {results.gemini_details && (
-                      <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
-                        <div className="flex items-center justify-between mb-4">
-                          <h4 className="text-lg font-semibold text-white">AI Details</h4>
-                          <span className="text-xs text-gray-400">model-evaluated</span>
+                      <div className="p-6 rounded-xl border border-[--color-border]">
+                        <div className="flex items-center justify-between mb-4 text-[--color-muted-foreground]">
+                          <h4 className="text-lg">AI Details</h4>
+                          <span className="text-xs text-[--color-muted-foreground]">model-evaluated</span>
                         </div>
                         <div className="grid grid-cols-2 gap-3 text-sm">
                           {Object.entries(results.gemini_details).map(([k, v]) => (
-                            <div key={k} className="flex items-center justify-between text-gray-300">
+                            <div key={k} className="flex items-center justify-between text-[--color-muted-foreground]">
                               <span className="capitalize">{k.replace(/_/g, ' ')}</span>
-                              <span className="text-white font-medium">{Number(v).toFixed(1)}</span>
+                              <span className="font-medium">{Number(v).toFixed(1)}</span>
                             </div>
                           ))}
                         </div>
@@ -531,13 +532,13 @@ export default function EvaluatePage() {
 
                 {/* Explanations */}
                 <div className="grid grid-cols-2 gap-6">
-                  <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
-                    <div className="text-sm font-medium text-gray-400 mb-2">ML Explanation</div>
-                    <p className="text-sm text-gray-200 leading-relaxed">{results.explanations.ml_explanation}</p>
+                  <div className="p-6 rounded-xl border border-[--color-border]">
+                    <div className="text-sm font-medium text-[--color-muted-foreground] mb-2">ML Explanation</div>
+                    <p className="text-sm text-[--color-muted-foreground] leading-relaxed">{results.explanations.ml_explanation}</p>
                   </div>
-                  <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
-                    <div className="text-sm font-medium text-gray-400 mb-2">AI Explanation</div>
-                    <p className="text-sm text-gray-200 leading-relaxed">{results.explanations.gemini_explanation}</p>
+                  <div className="p-6 rounded-xl border border-[--color-border]">
+                    <div className="text-sm font-medium text-[--color-muted-foreground] mb-2">AI Explanation</div>
+                    <p className="text-sm text-[--color-muted-foreground] leading-relaxed">{results.explanations.gemini_explanation}</p>
                   </div>
                 </div>
 
@@ -546,13 +547,13 @@ export default function EvaluatePage() {
                   <div className="grid grid-cols-2 gap-6">
                     {/* ML Methods */}
                     {results.ml_metrics?.method_scores && (
-                      <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
-                        <h4 className="text-lg font-semibold text-white mb-4">ML Method Scores</h4>
+                      <div className="p-6 rounded-xl border border-[--color-border]">
+                        <h4 className="text-lg font-semibold text-[--color-muted-foreground] mb-4">ML Method Scores</h4>
                         <div className="space-y-2 text-sm">
                           {Object.entries(results.ml_metrics.method_scores).map(([k, v]) => (
-                            <div key={k} className="flex items-center justify-between text-gray-300">
+                            <div key={k} className="flex items-center justify-between text-[--color-muted-foreground]">
                               <span className="uppercase">{k}</span>
-                              <span className="text-white font-medium">{v as number}</span>
+                              <span className="font-medium">{v as number}</span>
                             </div>
                           ))}
                         </div>
@@ -560,14 +561,14 @@ export default function EvaluatePage() {
                     )}
 
                     {/* AI Methods & Evidence */}
-                    <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
-                      <h4 className="text-lg font-semibold text-white mb-4">AI Insights</h4>
+                    <div className="p-6 rounded-xl border border-[--color-border]">
+                      <h4 className="text-lg font-semibold text-[--color-muted-foreground] mb-4">AI Insights</h4>
                       {results.gemini_metrics?.method_scores && (
                         <div className="space-y-2 text-sm mb-4">
                           {Object.entries(results.gemini_metrics.method_scores).map(([k, v]) => (
-                            <div key={k} className="flex items-center justify-between text-gray-300">
+                            <div key={k} className="flex items-center justify-between text-[--color-muted-foreground]">
                               <span className="uppercase">{k}</span>
-                              <span className="text-white font-medium">{v as number}</span>
+                              <span className="font-medium">{v as number}</span>
                             </div>
                           ))}
                         </div>
@@ -575,16 +576,16 @@ export default function EvaluatePage() {
 
                       {results.trace && (results.trace as any).gemini?.top_k_evidence && (
                         <div>
-                          <div className="text-sm font-medium text-gray-400 mb-2">Top Evidence</div>
+                          <div className="text-sm font-medium text-[--color-muted-foreground] mb-2">Top Evidence</div>
                           <ul className="space-y-2 text-sm">
                             {((results.trace as any).gemini.top_k_evidence as any[]).map((e, idx) => (
-                              <li key={idx} className="text-gray-300">
-                                <span className="text-white">{e.title || e.source}</span>
-                                {e.score !== undefined && <span className="ml-2 text-gray-400">({e.score})</span>}
+                              <li key={idx} className="text-[--color-muted-foreground]">
+                                <span className="text-[--color-muted-foreground]">{e.title || e.source}</span>
+                                {e.score !== undefined && <span className="ml-2 text-[--color-muted-foreground]">({e.score})</span>}
                                 {e.url && (
                                   <a href={e.url} target="_blank" rel="noreferrer" className="ml-2 text-blue-400 hover:underline">link</a>
                                 )}
-                                {e.snippet && <div className="text-gray-400">{e.snippet}</div>}
+                                {e.snippet && <div className="text-[--color-muted-foreground]">{e.snippet}</div>}
                               </li>
                             ))}
                           </ul>
@@ -618,7 +619,7 @@ export default function EvaluatePage() {
                 </div>
 
                 {/* Processing Time */}
-                <div className="text-center text-sm text-gray-400 pt-6 border-t border-gray-700">
+                <div className="text-center text-sm text-[--color-muted-foreground] pt-6 border-t border-[--color-border]">
                   Processed in {results.processing_time.toFixed(2)} seconds
                 </div>
               </div>
@@ -636,7 +637,7 @@ export default function EvaluatePage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setShowQuestionsList(false)}
-                className="border border-[--color-border] text-white"
+                className="border border-[--color-border]"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -654,7 +655,7 @@ export default function EvaluatePage() {
                     <button
                       key={question.id}
                       onClick={() => selectQuestion(question)}
-                      className="text-left p-4 rounded-lg border border-[--color-border] hover:bg-[--color-muted] transition-colors text-white"
+                      className="text-left p-4 rounded-lg border border-[--color-border] hover:bg-[--color-muted] transition-colors"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <span className="text-xs font-medium px-2 py-1 rounded-full bg-[--color-muted] text-[--color-muted-foreground]">

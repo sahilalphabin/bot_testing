@@ -7,6 +7,7 @@ import { Evaluation, ScatterDataPoint } from '@/types';
 import { ChartSkeleton } from './ChartSkeleton';
 import { EmptyChart } from './EmptyChart';
 import { FileText } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface ReadabilityScoreChartProps {
   evaluations: Evaluation[];
@@ -284,14 +285,7 @@ export function ReadabilityScoreChart({ evaluations, title = "Readability vs Com
                           {(item.id as string).slice(0, 8)}...
                         </td>
                         <td className="p-2">
-                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                            item.category === 'safety' ? 'bg-red-100 text-red-800' :
-                            item.category === 'technical' ? 'bg-blue-100 text-blue-800' :
-                            item.category === 'creative' ? 'bg-purple-100 text-purple-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {item.category}
-                          </span>
+                          <Badge variant="secondary" className="capitalize">{item.category}</Badge>
                         </td>
                         <td className="p-2">
                           <span className={`font-medium ${
