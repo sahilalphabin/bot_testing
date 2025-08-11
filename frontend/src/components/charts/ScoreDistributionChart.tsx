@@ -51,8 +51,9 @@ export function ScoreDistributionChart({ evaluations }: ScoreDistributionChartPr
 
     return ranges.map(({ range, min, max }) => {
       const count = evaluations.filter(
-        evaluation => evaluation.evaluation_results.combined_score >= min && 
-                     evaluation.evaluation_results.combined_score <= max
+        evaluation => evaluation.evaluation_results?.combined_score !== undefined &&
+                     evaluation.evaluation_results?.combined_score >= min && 
+                     evaluation.evaluation_results?.combined_score <= max
       ).length;
       
       return { range, count };

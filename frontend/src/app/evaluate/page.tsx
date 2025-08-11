@@ -192,12 +192,12 @@ export default function EvaluatePage() {
   };
 
   return (
-    <div className="flex h-[100dvh] overflow-hidden bg-[--color-background] text-[--color-foreground]">
+    <div className="flex min-h-screen bg-[--color-background] text-[--color-foreground]">
       {/* Left Panel - Form */}
       <div className="flex-1 flex flex-col overflow-hidden">
         
         <div className="flex-1 overflow-y-auto">
-          <div className="p-8 box-border">
+          <div className="p-8">
             <div className="mb-6 sticky top-0 z-10 bg-[--color-background]/80 backdrop-blur supports-[backdrop-filter]:bg-[--color-background]/70">
               <h1 className="text-2xl font-bold">Evaluate Chatbot Response</h1>
               <p className="mt-1 text-[--color-muted-foreground]">
