@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Settings, Download, RefreshCw, Eye, EyeOff, Palette } from 'lucide-react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface ChartSettingsProps {
   title?: string;
@@ -120,15 +120,14 @@ export function ChartSettings({
               Export
             </Button>
           )}
-          <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-            <CollapsibleTrigger asChild>
+          <Popover open={isOpen} onOpenChange={setIsOpen}>
+            <PopoverTrigger asChild>
               <Button variant="outline" size="sm" className="flex items-center gap-2">
                 <Settings className="h-4 w-4" />
                 Settings
               </Button>
-            </CollapsibleTrigger>
-            
-            <CollapsibleContent className="space-y-4 mt-4">
+            </PopoverTrigger>
+            <PopoverContent className="p-0 w-[420px]">
               <Card>
                 <CardHeader>
                   <CardTitle className="text-base">Chart Configuration</CardTitle>
@@ -303,8 +302,8 @@ export function ChartSettings({
                   </div>
                 </CardContent>
               </Card>
-            </CollapsibleContent>
-          </Collapsible>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
     </div>

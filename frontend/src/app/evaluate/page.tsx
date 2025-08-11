@@ -215,43 +215,31 @@ export default function EvaluatePage() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <Label className="text-base font-medium">Test Question</Label>
-                    <div className="flex items-center space-x-2 bg-[--color-muted] rounded-lg p-1">
-                      <button
+                    <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
+                      <Button
                         type="button"
+                        variant={questionMode === 'predefined' ? 'default' : 'ghost'}
+                        size="sm"
                         onClick={() => {
                           setQuestionMode('predefined');
                           setCustomQuestion('');
                         }}
-                        className={`px-3 py-1 text-sm rounded-md transition-colors border
-                          ${
-                            questionMode === 'predefined'
-                              ? 'bg-[--color-card] text-[--color-foreground] border-[--color-primary] border-2'
-                              : 'text-[--color-muted-foreground] hover:text-[--color-foreground] border-transparent'
-                          }`}
-                        style={{
-                          boxShadow: questionMode === 'predefined' ? '0 0 0 2px hsl(var(--primary))' : undefined
-                        }}
+                        className="rounded-md"
                       >
                         Predefined
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
+                        variant={questionMode === 'custom' ? 'default' : 'ghost'}
+                        size="sm"
                         onClick={() => {
                           setQuestionMode('custom');
                           setSelectedQuestionId('');
                         }}
-                        className={`px-3 py-1 text-sm rounded-md transition-colors border
-                          ${
-                            questionMode === 'custom'
-                              ? 'bg-[--color-card] text-[--color-foreground] border-[--color-primary] border-2'
-                              : 'text-[--color-muted-foreground] hover:text-[--color-foreground] border-transparent'
-                          }`}
-                        style={{
-                          boxShadow: questionMode === 'custom' ? '0 0 0 2px hsl(var(--primary))' : undefined
-                        }}
+                        className="rounded-md"
                       >
                         Custom
-                      </button>
+                      </Button>
                     </div>
                   </div>
                   
@@ -276,7 +264,7 @@ export default function EvaluatePage() {
                             <SelectItem value="hard">Hard</SelectItem>
                           </SelectContent>
                         </Select>
-                        <Button type="button" variant="outline" className="border border-[--color-border]" onClick={() => generateNewQuestions('general')}>Refresh</Button>
+                        <Button type="button" variant="outline" onClick={() => generateNewQuestions('general')}>Refresh</Button>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                     <Button
@@ -284,7 +272,7 @@ export default function EvaluatePage() {
                       variant="outline"
                       onClick={() => generateNewQuestions('general')}
                       disabled={loadingNewQuestions}
-                      className="justify-start h-12 border-[--color-border] hover:bg-[--color-muted]"
+                      className="justify-start h-12"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       General Knowledge
@@ -294,7 +282,7 @@ export default function EvaluatePage() {
                       variant="outline"
                       onClick={() => generateNewQuestions('safety')}
                       disabled={loadingNewQuestions}
-                      className="justify-start h-12 border-2 border-red-500 hover:bg-[--color-muted]"
+                      className="justify-start h-12"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Safety Testing
@@ -525,7 +513,7 @@ export default function EvaluatePage() {
                     {results.gemini_details && (
                       <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
                         <div className="flex items-center justify-between mb-4">
-                          <h4 className="text-lg font-semibold text-white">AI (Gemini) Details</h4>
+                          <h4 className="text-lg font-semibold text-white">AI Details</h4>
                           <span className="text-xs text-gray-400">model-evaluated</span>
                         </div>
                         <div className="grid grid-cols-2 gap-3 text-sm">

@@ -13,20 +13,20 @@ export function MethodBreakdownBar({ ml, ai }: MethodBreakdownBarProps) {
   const data = keys.map((k) => ({ method: k.toUpperCase(), ML: ml?.[k] ?? 0, AI: ai?.[k] ?? 0 }));
 
   return (
-    <Card className="col-span-2 bg-gray-800 border-gray-600">
+    <Card className="col-span-2 bg-[--color-card] border border-[--color-border]">
       <CardHeader>
-        <CardTitle className="text-white">Method Scores (ML vs AI)</CardTitle>
+        <CardTitle>Method Scores (ML vs AI)</CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" className="opacity-30" stroke="hsl(var(--border))" />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
             <XAxis dataKey="method" stroke="hsl(var(--muted-foreground))" fontSize={12} />
             <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
-            <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))', borderRadius: '6px', color: 'hsl(var(--foreground))' }} />
+            <Tooltip cursor={{ fill: 'hsl(var(--muted))', opacity: 0.15, stroke: 'transparent' }} contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '6px', color: 'hsl(var(--foreground))' }} />
             <Legend />
-            <Bar dataKey="ML" fill="#60a5fa" />
-            <Bar dataKey="AI" fill="#34d399" />
+            <Bar dataKey="ML" fill="hsl(var(--chart-2))" stroke="transparent" />
+            <Bar dataKey="AI" fill="hsl(var(--chart-3))" stroke="transparent" />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

@@ -95,16 +95,15 @@ export function CategoryDimensionHeatmap({
   const minValue = Math.min(...heatmapData.map(d => d.value));
   const maxValue = Math.max(...heatmapData.map(d => d.value));
 
-  const getColor = (value: number) => {
-    if (maxValue === minValue) return 'bg-blue-300';
-    
+  const getColorClass = (value: number) => {
+    if (maxValue === minValue) return 'bg-[hsl(var(--chart-3))]';
     const normalized = (value - minValue) / (maxValue - minValue);
-    
-    if (normalized < 0.3) return 'bg-red-200 text-red-900';
-    if (normalized < 0.5) return 'bg-yellow-200 text-yellow-900';
-    if (normalized < 0.7) return 'bg-blue-200 text-blue-900';
-    if (normalized < 0.85) return 'bg-green-200 text-green-900';
-    return 'bg-green-300 text-green-900';
+    // Map low values to warm colors -> high values to cool/green/blue for pleasant contrast
+    if (normalized < 0.2) return 'bg-[hsl(var(--chart-5))] text-white';      // red
+    if (normalized < 0.4) return 'bg-[hsl(var(--chart-3))] text-white';      // orange
+    if (normalized < 0.6) return 'bg-[hsl(var(--chart-4))] text-white';      // purple
+    if (normalized < 0.8) return 'bg-[hsl(var(--chart-2))] text-black';      // green
+    return 'bg-[hsl(var(--chart-1))] text-black';                            // blue
   };
 
   const getIntensity = (value: number) => {
@@ -165,16 +164,21 @@ export function CategoryDimensionHeatmap({
                   
                   if (!dataPoint) {
                     return (
-                      <div key={group} className="p-2 bg-gray-100 dark:bg-gray-800 text-center text-sm">
+                      <div
+                        key={group}
+                        className="p-2 text-center text-sm rounded-md border border-[--color-border]/30 bg-[--color-muted] text-[--color-muted-foreground]"
+                        title={`${dimension.label} for ${group}: N/A`}
+                      >
                         N/A
                       </div>
                     );
                   }
 
+                  const colorClass = getColorClass(dataPoint.value);
                   return (
                     <div
                       key={group}
-                      className={`p-2 text-center text-sm font-medium transition-colors ${getColor(dataPoint.value)}`}
+                      className={`p-2 text-center text-sm font-medium ${colorClass} rounded-md border border-[--color-border]/30 hover:ring-1 hover:ring-[--color-border] transition-colors`}
                       title={`${dimension.label} for ${group}: ${dataPoint.value.toFixed(1)} (${dataPoint.count} evaluations)`}
                     >
                       <div>{dataPoint.value.toFixed(1)}</div>
@@ -191,11 +195,11 @@ export function CategoryDimensionHeatmap({
         <div className="mt-6 flex items-center justify-center gap-2">
           <span className="text-sm">Low</span>
           <div className="flex">
-            <div className="w-4 h-4 bg-red-200"></div>
-            <div className="w-4 h-4 bg-yellow-200"></div>
-            <div className="w-4 h-4 bg-blue-200"></div>
-            <div className="w-4 h-4 bg-green-200"></div>
-            <div className="w-4 h-4 bg-green-300"></div>
+            <div className="w-4 h-4 bg-[hsl(var(--chart-5))]"></div>
+            <div className="w-4 h-4 bg-[hsl(var(--chart-3))]"></div>
+            <div className="w-4 h-4 bg-[hsl(var(--chart-4))]"></div>
+            <div className="w-4 h-4 bg-[hsl(var(--chart-2))]"></div>
+            <div className="w-4 h-4 bg-[hsl(var(--chart-1))]"></div>
           </div>
           <span className="text-sm">High</span>
         </div>

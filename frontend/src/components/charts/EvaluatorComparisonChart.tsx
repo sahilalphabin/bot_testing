@@ -70,8 +70,9 @@ export function EvaluatorComparisonChart({ evaluations }: EvaluatorComparisonCha
               fontSize={12}
             />
             <Tooltip 
+              cursor={{ stroke: 'transparent' }}
               contentStyle={{
-                backgroundColor: 'hsl(var(--background))',
+                backgroundColor: 'hsl(var(--card))',
                 border: '1px solid hsl(var(--border))',
                 borderRadius: '6px',
                 color: 'hsl(var(--foreground))'

@@ -36,11 +36,11 @@ export function EntityConsistencyChart({ evaluations, title = "Entity Consistenc
     .filter(score => score !== undefined && !isNaN(score)) as number[];
 
   const bins = [
-    { range: '0-20', min: 0, max: 20, count: 0, color: '#dc2626' },
-    { range: '20-40', min: 20, max: 40, count: 0, color: '#ea580c' },
-    { range: '40-60', min: 40, max: 60, count: 0, color: '#d97706' },
-    { range: '60-80', min: 60, max: 80, count: 0, color: '#65a30d' },
-    { range: '80-100', min: 80, max: 100, count: 0, color: '#16a34a' },
+    { range: '0-20', min: 0, max: 20, count: 0, color: 'hsl(var(--chart-5))' },
+    { range: '20-40', min: 20, max: 40, count: 0, color: 'hsl(var(--chart-4))' },
+    { range: '40-60', min: 40, max: 60, count: 0, color: 'hsl(var(--chart-3))' },
+    { range: '60-80', min: 60, max: 80, count: 0, color: 'hsl(var(--chart-2))' },
+    { range: '80-100', min: 80, max: 100, count: 0, color: 'hsl(var(--chart-1))' },
   ];
 
   entityScores.forEach(score => {
@@ -89,13 +89,13 @@ export function EntityConsistencyChart({ evaluations, title = "Entity Consistenc
     if (active && payload && payload.length) {
       const data = payload[0];
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
+        <div className="p-3 rounded-lg shadow-sm" style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))' }}>
           <p className="font-semibold">Entity F1 Score: {label}</p>
           <p className="text-sm">
-            <span className="text-blue-600">Count:</span> {data.value}
+            <span className="text-foreground">Count:</span> {data.value}
           </p>
           <p className="text-sm">
-            <span className="text-green-600">Percentage:</span> {
+            <span className="text-foreground">Percentage:</span> {
               entityScores.length > 0 ? ((data.value / entityScores.length) * 100).toFixed(1) : 0
             }%
           </p>
@@ -124,11 +124,11 @@ export function EntityConsistencyChart({ evaluations, title = "Entity Consistenc
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={bins}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="range" />
-                <YAxis />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="range" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <Tooltip cursor={{ fill: 'hsl(var(--muted))', opacity: 0.15, stroke: 'transparent' }} content={<CustomTooltip />} />
+                <Bar dataKey="count" radius={[4, 4, 0, 0]} stroke="transparent">
                   {bins.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}

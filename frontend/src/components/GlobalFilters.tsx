@@ -245,7 +245,7 @@ export function GlobalFilters({ evaluations, onFilterChange, onExport }: GlobalF
                 <SelectContent>
                   <SelectItem value="">All types</SelectItem>
                   <SelectItem value="ml">ML Only</SelectItem>
-                  <SelectItem value="gemini">Gemini Only</SelectItem>
+                  <SelectItem value="gemini">AI Only</SelectItem>
                   <SelectItem value="both">Both</SelectItem>
                 </SelectContent>
               </Select>

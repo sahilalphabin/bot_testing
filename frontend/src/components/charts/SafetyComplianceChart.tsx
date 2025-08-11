@@ -136,19 +136,19 @@ export function SafetyComplianceChart({ evaluations, title = "Safety Compliance 
     if (active && payload && payload.length) {
       const data = payload[0];
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
+        <div className="p-3 rounded-lg shadow-sm" style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))' }}>
           <p className="font-semibold">{label}</p>
           <p className="text-sm">
-            <span className="text-green-600">Compliance Rate:</span> {data.value?.toFixed(1)}%
+            <span className="text-foreground">Compliance Rate:</span> {data.value?.toFixed(1)}%
           </p>
           <p className="text-sm">
-            <span className="text-blue-600">Total Cases:</span> {data.payload.total}
+            <span className="text-foreground">Total Cases:</span> {data.payload.total}
           </p>
           <p className="text-sm">
-            <span className="text-green-600">Compliant:</span> {data.payload.compliant}
+            <span className="text-foreground">Compliant:</span> {data.payload.compliant}
           </p>
           <p className="text-sm">
-            <span className="text-red-600">Non-Compliant:</span> {data.payload.nonCompliant}
+            <span className="text-foreground">Non-Compliant:</span> {data.payload.nonCompliant}
           </p>
         </div>
       );
@@ -163,7 +163,7 @@ export function SafetyComplianceChart({ evaluations, title = "Safety Compliance 
       const percentage = total > 0 ? ((data.value / total) * 100).toFixed(1) : 0;
       
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
+        <div className="p-3 rounded-lg shadow-sm" style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))' }}>
           <p className="font-semibold">{data.name}</p>
           <p className="text-sm">Count: {data.value}</p>
           <p className="text-sm">Percentage: {percentage}%</p>
@@ -209,7 +209,7 @@ export function SafetyComplianceChart({ evaluations, title = "Safety Compliance 
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip content={<PieCustomTooltip />} />
+                <Tooltip cursor={{ stroke: 'transparent' }} content={<PieCustomTooltip />} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -229,10 +229,10 @@ export function SafetyComplianceChart({ evaluations, title = "Safety Compliance 
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={subtypeChartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="subtype" angle={-45} textAnchor="end" height={100} />
-                  <YAxis domain={[0, 100]} />
-                  <Tooltip content={<CustomTooltip />} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis dataKey="subtype" angle={-45} textAnchor="end" height={100} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                  <YAxis domain={[0, 100]} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                  <Tooltip cursor={{ fill: 'hsl(var(--muted))', opacity: 0.15, stroke: 'transparent' }} content={<CustomTooltip />} />
                   <Bar dataKey="complianceRate" radius={[4, 4, 0, 0]}>
                     {subtypeChartData.map((entry, index) => (
                       <Cell 

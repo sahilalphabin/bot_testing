@@ -14,10 +14,10 @@ interface ReadabilityScoreChartProps {
 }
 
 const categoryColors = {
-  general: '#8884d8',
-  safety: '#dc2626',
-  technical: '#059669', 
-  creative: '#7c3aed'
+  general: 'hsl(var(--chart-1))',
+  safety: 'hsl(var(--chart-2))',
+  technical: 'hsl(var(--chart-3))', 
+  creative: 'hsl(var(--chart-4))'
 };
 
 export function ReadabilityScoreChart({ evaluations, title = "Readability vs Combined Score" }: ReadabilityScoreChartProps) {
@@ -118,28 +118,28 @@ export function ReadabilityScoreChart({ evaluations, title = "Readability vs Com
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
+        <div className="p-3 rounded-lg shadow-sm" style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))' }}>
           <p className="font-semibold">{data.name}</p>
           <p className="text-sm">
-            <span className="text-blue-600">Readability:</span> {data.x.toFixed(1)}
+            <span className="text-foreground">Readability:</span> {data.x.toFixed(1)}
           </p>
           <p className="text-sm">
-            <span className="text-green-600">Score:</span> {data.y.toFixed(1)}
+            <span className="text-foreground">Score:</span> {data.y.toFixed(1)}
           </p>
           <p className="text-sm">
-            <span className="text-purple-600">Clarity:</span> {data.clarity.toFixed(1)}
+            <span className="text-foreground">Clarity:</span> {data.clarity.toFixed(1)}
           </p>
           <p className="text-sm">
-            <span className="text-orange-600">Grammar Errors:</span> {data.grammarErrors}
+            <span className="text-foreground">Grammar Errors:</span> {data.grammarErrors}
           </p>
           <p className="text-sm">
-            <span className="text-gray-600">Answer Length:</span> {data.answerLength} words
+            <span className="text-muted-foreground">Answer Length:</span> {data.answerLength} words
           </p>
           <p className="text-sm capitalize">
-            <span className="text-gray-600">Category:</span> {data.category}
+            <span className="text-muted-foreground">Category:</span> {data.category}
           </p>
           <p className="text-sm capitalize">
-            <span className="text-gray-600">Difficulty:</span> {data.difficulty}
+            <span className="text-muted-foreground">Difficulty:</span> {data.difficulty}
           </p>
         </div>
       );
@@ -175,7 +175,7 @@ export function ReadabilityScoreChart({ evaluations, title = "Readability vs Com
                   left: 20,
                 }}
               >
-                <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis 
                   type="number" 
                   dataKey="x" 
@@ -190,7 +190,7 @@ export function ReadabilityScoreChart({ evaluations, title = "Readability vs Com
                   domain={[0, 100]}
                   label={{ value: 'Combined Score', angle: -90, position: 'insideLeft' }}
                 />
-                <Tooltip content={<CustomTooltip />} />
+                <Tooltip cursor={{ stroke: 'transparent', fill: 'hsl(var(--muted))', opacity: 0.15 }} content={<CustomTooltip />} />
                 
                 {/* Reference lines */}
                 <ReferenceLine 

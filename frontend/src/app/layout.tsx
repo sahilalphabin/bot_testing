@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "EvalBot AI - Advanced Chatbot Evaluation Platform",
-  description: "Professional chatbot response evaluation using cutting-edge ML/NLP algorithms and Gemini AI analysis. Compare, analyze, and optimize your AI assistants with confidence.",
+  description: "Professional chatbot response evaluation using cutting-edge ML/NLP algorithms and AI analysis. Compare, analyze, and optimize your AI assistants with confidence.",
 };
 
 export default function RootLayout({

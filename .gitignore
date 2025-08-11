@@ -34,6 +34,7 @@ out/
 
 # Node modules
 node_modules/
+*/node_modules/*
 
 # Bun cache
 .bun/
@@ -66,3 +67,4 @@ coverage/
 dist/
 build/
 # End Generation Here
+

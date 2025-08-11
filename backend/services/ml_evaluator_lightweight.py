@@ -80,6 +80,7 @@ class LightweightMLEvaluator:
                 
             # Load ONNX model
             self.onnx_session = ort.InferenceSession(model_path)
+            self.onnx_model = self.onnx_session  # Set the model reference
             print("ONNX model loaded successfully")
             
         except Exception as e:

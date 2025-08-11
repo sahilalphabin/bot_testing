@@ -23,23 +23,13 @@ export function DemoDataButton() {
 
   return (
     <div className="flex space-x-2">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={handleGenerateDemoData}
-        className="flex items-center space-x-2"
-      >
+      <Button variant="outline" size="sm" onClick={handleGenerateDemoData} className="flex items-center gap-2">
         <Plus className="h-4 w-4" />
         <span>Load Demo Data</span>
       </Button>
       
       {evaluations.length > 0 && (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleClearData}
-          className="flex items-center space-x-2 text-red-600 hover:text-red-700 border-red-300 hover:border-red-400"
-        >
+        <Button variant="destructive" size="sm" onClick={handleClearData} className="flex items-center gap-2">
           <Trash2 className="h-4 w-4" />
           <span>Clear Data</span>
         </Button>

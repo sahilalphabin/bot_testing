@@ -2,59 +2,60 @@
 
 @layer base {
   :root {
-    /* Light theme (improved) */
-    --background: 0 0% 98%;           /* #FAFAFA */
-    --foreground: 222 45% 9%;         /* #0B1220 */
+    /* Light theme — grayscale (TestDino style) */
+    --background: 0 0% 100%;          /* #FFFFFF */
+    --foreground: 0 0% 10%;           /* near-black */
     --card: 0 0% 100%;                /* #FFFFFF */
-    --card-foreground: 222 45% 9%;
+    --card-foreground: 0 0% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 45% 9%;
-    --primary: 221 83% 53%;           /* #2563EB */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;         /* #F3F4F6-ish */
-    --secondary-foreground: 222 45% 9%;
-    --muted: 220 14% 96%;             /* #F3F4F6 */
-    --muted-foreground: 220 9% 46%;   /* #6B7280 */
-    --accent: 221 100% 96%;
-    --accent-foreground: 222 45% 9%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 0 0% 10%;              /* black as primary accent */
+    --primary-foreground: 0 0% 100%;  /* white text on primary */
+    --secondary: 0 0% 96%;            /* light gray */
+    --secondary-foreground: 0 0% 10%;
+    --muted: 0 0% 96%;                /* light gray */
+    --muted-foreground: 0 0% 45%;     /* mid gray */
+    --accent: 0 0% 92%;               /* subtle gray */
+    --accent-foreground: 0 0% 10%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 14% 90%;            /* #E5E7EB */
-    --input: 220 14% 96%;             /* match muted so inputs look native */
-    --ring: 216 97% 78%;              /* #93C5FD */
-    --chart-1: 221 83% 53%;           /* #2563EB */
-    --chart-2: 160 84% 39%;           /* #10B981 */
-    --chart-3: 36 100% 50%;           /* #F59E0B */
-    --chart-4: 255 85% 65%;           /* #8B5CF6 */
-    --chart-5: 0 84% 56%;             /* #EF4444 */
+    --border: 0 0% 88%;               /* #E0E0E0 */
+    --input: 0 0% 96%;                /* match muted so inputs look native */
+    --ring: 0 0% 20%;                 /* neutral ring */
+    /* charts — colorful palette */
+    --chart-1: 221 83% 53%;     /* blue */
+    --chart-2: 160 84% 39%;     /* green */
+    --chart-3: 36 100% 50%;     /* orange */
+    --chart-4: 292 85% 65%;     /* purple */
+    --chart-5: 0 84% 56%;       /* red */
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222 45% 9%;         /* #0B1220 */
-    --foreground: 210 20% 96%;        /* #F3F4F6 */
-    --card: 222 47% 12%;              /* #0F172A */
-    --card-foreground: 210 20% 96%;
-    --popover: 222 47% 12%;
-    --popover-foreground: 210 20% 96%;
-    --primary: 217 91% 66%;           /* #60A5FA */
-    --primary-foreground: 222 47% 12%;
-    --secondary: 215 28% 10%;         /* #111827 */
-    --secondary-foreground: 210 20% 96%;
-    --muted: 215 28% 10%;
-    --muted-foreground: 217 12% 65%;  /* #9CA3AF */
-    --accent: 215 28% 10%;
-    --accent-foreground: 210 20% 96%;
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 210 20% 96%;
-    --border: 215 28% 17%;            /* #1F2937 */
-    --input: 215 28% 10%;
-    --ring: 221 83% 53%;              /* #2563EB */
-    --chart-1: 217 91% 66%;
-    --chart-2: 160 84% 39%;
-    --chart-3: 36 100% 50%;
-    --chart-4: 255 85% 65%;
-    --chart-5: 0 84% 56%;
+    --background: 0 0% 7%;            /* near-black */
+    --foreground: 0 0% 96%;           /* near-white */
+    --card: 0 0% 10%;                 /* dark gray */
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 0 0% 98%;              /* white as primary accent in dark */
+    --primary-foreground: 0 0% 7%;
+    --secondary: 0 0% 14%;            /* darker gray */
+    --secondary-foreground: 0 0% 96%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 0 0% 14%;
+    --accent-foreground: 0 0% 96%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 96%;
+    --border: 0 0% 20%;               /* neutral border */
+    --input: 0 0% 14%;
+    --ring: 0 0% 80%;
+    --chart-1: 217 91% 66%;     /* blue */
+    --chart-2: 160 84% 39%;     /* green */
+    --chart-3: 36 100% 50%;     /* orange */
+    --chart-4: 292 85% 65%;     /* purple */
+    --chart-5: 0 84% 56%;       /* red */
   }
 }
 
@@ -105,5 +106,17 @@ body {
     transition-timing-function: ease;
   }
 }
+
+/* Recharts theme alignment and hover fixes */
+.recharts-default-tooltip {
+  border-radius: 6px !important;
+  background: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+.recharts-legend-item-text { color: hsl(var(--muted-foreground)) !important; }
+.recharts-cartesian-grid line { stroke: hsl(var(--border)) !important; }
+.recharts-xAxis text, .recharts-yAxis text { fill: hsl(var(--muted-foreground)) !important; }
+.recharts-active-bar path, .recharts-bar-rectangle:hover path { stroke: transparent !important; }
 
 
