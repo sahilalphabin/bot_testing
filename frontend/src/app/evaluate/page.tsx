@@ -12,7 +12,7 @@ import { useData } from "@/context/DataContext";
 import { apiClient } from "@/lib/api";
 import { Question, Evaluation } from '@/types';
 import { cn } from '@/lib/utils';
-import { Loader2, Plus, Send, X } from "lucide-react";
+import { Loader2, Plus, Send, X, Eye } from "lucide-react";
 import { RadarDimensionsChart } from "@/components/charts/RadarDimensionsChart";
 import { MethodBreakdownBar } from "@/components/charts/MethodBreakdownBar";
 
@@ -69,13 +69,14 @@ export default function EvaluatePage() {
           id: 'q1',
           text: 'What is artificial intelligence?',
           category: 'general',
-          difficulty: 'medium'
+          difficulty: 'medium',
+          standard_answers: ['Artificial intelligence (AI) is the field of computer science focused on creating systems that perform tasks requiring human intelligence.']
         },
         {
           id: 'q2', 
           text: 'Explain machine learning in simple terms.',
           category: 'technical',
-          difficulty: 'easy'
+          difficulty: 'easy',
         },
         {
           id: 'q3',
@@ -102,13 +103,22 @@ export default function EvaluatePage() {
     }
   };
 
-  const selectQuestion = (question: Question) => {
+  const openBrowseQuestions = () => {
+    // Show existing questions if no generated set is requested
+    setGeneratedQuestions([]);
+    setShowQuestionsList(true);
+  };
+
+  const selectQuestion = (question: Question, standard?: string) => {
     setSelectedQuestionId(question.id);
     setCustomQuestion('');
     // Add to questions list if not already present
     if (!questions.find(q => q.id === question.id)) {
       setQuestions(prev => [...prev, question]);
     }
+    // Auto-fill ground truth if standard answer provided or available
+    const std = standard || question.standard_answers?.[0];
+    if (std) setManualAnswer(std);
     setShowQuestionsList(false);
   };
 
@@ -191,6 +201,12 @@ export default function EvaluatePage() {
     setQuestionMode('predefined');
   };
 
+  // Derived list for modal (generated list if available, else all loaded questions)
+  const modalQuestions: Question[] = generatedQuestions.length > 0 ? generatedQuestions : questions;
+
+  // Helper to render standard answers under selected question chip
+  const selectedQuestion = questions.find(q => q.id === selectedQuestionId);
+
   return (
     <div className="flex min-h-screen bg-[--color-background] text-[--color-foreground]">
       {/* Left Panel - Form */}
@@ -253,7 +269,7 @@ export default function EvaluatePage() {
                           placeholder="Search questions..."
                           className="bg-[--color-input] border border-[--color-border]"
                         />
-                        <Select value={difficulty} onValueChange={(v: any)=> setDifficulty(v)}>
+                        <Select value={difficulty} onValueChange={(v) => setDifficulty(v as any)}>
                           <SelectTrigger className="w-40 bg-[--color-input] border border-[--color-border]">
                             <SelectValue placeholder="Difficulty" />
                           </SelectTrigger>
@@ -264,49 +280,10 @@ export default function EvaluatePage() {
                             <SelectItem value="hard">Hard</SelectItem>
                           </SelectContent>
                         </Select>
-                        <Button type="button" variant="outline" onClick={() => generateNewQuestions('general')}>Refresh</Button>
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => generateNewQuestions('general')}
-                      disabled={loadingNewQuestions}
-                      className="justify-start h-12"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      General Knowledge
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => generateNewQuestions('safety')}
-                      disabled={loadingNewQuestions}
-                      className="justify-start h-12"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Safety Testing
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => generateNewQuestions('technical')}
-                      disabled={loadingNewQuestions}
-                      className="justify-start h-12 border-[--color-border] hover:bg-[--color-muted]"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Technical Skills
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => generateNewQuestions('creative')}
-                      disabled={loadingNewQuestions}
-                      className="justify-start h-12 border-[--color-border] hover:bg-[--color-muted]"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Creative Tasks
-                    </Button>
+                        <Button type="button" variant="outline" onClick={() => generateNewQuestions('general')}>Generate</Button>
+                        <Button type="button" variant="outline" onClick={openBrowseQuestions}>
+                          <Eye className="h-4 w-4 mr-2" />Browse
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -334,6 +311,18 @@ export default function EvaluatePage() {
                           : customQuestion
                         }
                       </p>
+                      {questionMode === 'predefined' && selectedQuestion?.standard_answers?.length ? (
+                        <div className="mt-3">
+                          <div className="text-xs text-[--color-muted-foreground] mb-1">Standard answers:</div>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedQuestion.standard_answers.map((a, idx) => (
+                              <Button key={idx} type="button" size="sm" variant="secondary" onClick={() => setManualAnswer(a)}>
+                                Use #{idx+1}
+                              </Button>
+                            ))}
+                          </div>
+                        </div>
+                      ) : null}
                     </div>
                   )}
                 </div>
@@ -359,7 +348,7 @@ export default function EvaluatePage() {
                       id="manual-answer"
                       value={manualAnswer}
                       onChange={(e) => setManualAnswer(e.target.value)}
-                      placeholder="Enter the correct/expected answer here..."
+                      placeholder="Enter or auto-fill the correct/expected answer..."
                       rows={5}
                       required
                       className="mt-2 resize-none bg-[--color-input] border border-[--color-border] focus-visible:ring-[--color-ring] placeholder:text-[--color-muted-foreground]"
@@ -367,10 +356,10 @@ export default function EvaluatePage() {
                   </div>
                 </div>
 
-                                {/* Evaluation Type */}
+                {/* Evaluation Type */}
                 <div>
                   <Label className="text-base font-medium">Evaluation Method</Label>
-                  <Select value={evaluationType} onValueChange={(value: 'both' | 'ml' | 'gemini') => setEvaluationType(value)}>
+                  <Select value={evaluationType} onValueChange={(v) => setEvaluationType(v as 'both' | 'ml' | 'gemini')}>
                     <SelectTrigger className="mt-2 bg-[--color-input] border border-[--color-border] focus:ring-[--color-ring]">
                       <SelectValue />
                     </SelectTrigger>
@@ -624,13 +613,13 @@ export default function EvaluatePage() {
                 </div>
               </div>
             )}
-          </div>
+                  </div>
         </div>
 
       {/* Questions List Modal */}
       {showQuestionsList && (
-        <div className="fixed inset-0 bg-black/80 dark:bg-black/90 flex items-center justify-center p-4 z-50">
-          <div className="bg-[--color-card]/95 backdrop-blur-md rounded-lg max-w-4xl w-full max-h-[80vh] border border-[--color-border] shadow-lg text-white">
+        <div className="fixed inset-0 bg-black/60 dark:bg-black/70 flex items-center justify-center p-4 z-50">
+          <div className="bg-[--color-card] rounded-lg max-w-4xl w-full max-h-[80vh] border border-[--color-border] shadow-lg text-[--color-foreground]">
             <div className="flex items-center justify-between p-6 border-b border-[--color-border]">
               <h2 className="text-xl font-semibold">Select a Test Question</h2>
               <Button
@@ -644,18 +633,20 @@ export default function EvaluatePage() {
             </div>
             
             <div className="p-6 overflow-y-auto max-h-[60vh]">
-              {loadingNewQuestions ? (
+              {loadingNewQuestions || loadingQuestions ? (
                 <div className="text-center py-8">
                   <Loader2 className="mx-auto h-8 w-8 animate-spin text-[--color-muted-foreground] mb-4" />
-                  <p className="text-[--color-muted-foreground]">Generating questions...</p>
+                  <p className="text-[--color-muted-foreground]">Loading questions...</p>
                 </div>
               ) : (
                 <div className="grid gap-3">
-                  {generatedQuestions.map((question, index) => (
-                    <button
+                  {modalQuestions
+                    .filter(q => (difficulty === 'all' || q.difficulty === difficulty))
+                    .filter(q => q.text.toLowerCase().includes(search.toLowerCase()))
+                    .map((question, index) => (
+                    <div
                       key={question.id}
-                      onClick={() => selectQuestion(question)}
-                      className="text-left p-4 rounded-lg border border-[--color-border] hover:bg-[--color-muted] transition-colors"
+                      className="p-4 rounded-lg border border-[--color-border] bg-[--color-card]"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <span className="text-xs font-medium px-2 py-1 rounded-full bg-[--color-muted] text-[--color-muted-foreground]">
@@ -663,8 +654,27 @@ export default function EvaluatePage() {
                         </span>
                         <span className="text-xs text-[--color-muted-foreground]">#{index + 1}</span>
                       </div>
-                      <p className="text-sm leading-relaxed">{question.text}</p>
-                    </button>
+                      <p className="text-sm leading-relaxed mb-3">{question.text}</p>
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => selectQuestion(question)}
+                        >
+                          Select
+                        </Button>
+                        {question.standard_answers?.length ? (
+                          <div className="flex flex-wrap gap-2">
+                            {question.standard_answers.map((ans, idx) => (
+                              <Button key={idx} type="button" size="sm" variant="secondary" onClick={() => selectQuestion(question, ans)}>
+                                Autofill GT #{idx + 1}
+                              </Button>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
                   ))}
                 </div>
               )}

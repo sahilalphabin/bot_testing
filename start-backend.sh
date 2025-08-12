@@ -3,6 +3,13 @@
 # Start the backend server from repo root
 cd backend || exit 1
 
+if [ -d ".venv" ]; then
+    echo "Virtual environment already exists"
+else
+    echo "Creating virtual environment..."
+    python3 -m venv .venv
+fi
+
 # Activate virtual environment
 source .venv/bin/activate
 
@@ -19,5 +26,5 @@ nltk.download('stopwords', quiet=True)
 print('NLTK data setup complete')
 "
 
-python -m uvicorn main:app --host 0.0.0.0 --port 8080
+python3 -m uvicorn main:app --host 0.0.0.0 --port 8080
 
