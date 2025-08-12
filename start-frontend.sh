@@ -2,7 +2,11 @@
 
 # Start the frontend development server from repo root
 cd frontend || exit 1
+npm install
 
-# Prefer bun over npm
-bun run dev
+# Start the frontend development server
+npm run dev
+
+
+
 
