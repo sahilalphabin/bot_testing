@@ -263,26 +263,8 @@ export default function EvaluatePage() {
                   {questionMode === 'predefined' && (
                     <div className="space-y-3">
                       <div className="flex gap-3">
-                        <Input
-                          value={search}
-                          onChange={(e) => setSearch(e.target.value)}
-                          placeholder="Search questions..."
-                          className="bg-[--color-input] border border-[--color-border]"
-                        />
-                        <Select value={difficulty} onValueChange={(v) => setDifficulty(v as any)}>
-                          <SelectTrigger className="w-40 bg-[--color-input] border border-[--color-border]">
-                            <SelectValue placeholder="Difficulty" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All</SelectItem>
-                            <SelectItem value="easy">Easy</SelectItem>
-                            <SelectItem value="medium">Medium</SelectItem>
-                            <SelectItem value="hard">Hard</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Button type="button" variant="outline" onClick={() => generateNewQuestions('general')}>Generate</Button>
                         <Button type="button" variant="outline" onClick={openBrowseQuestions}>
-                          <Eye className="h-4 w-4 mr-2" />Browse
+                          <Eye className="h-4 w-4 mr-2" />Browse Questions
                         </Button>
                       </div>
                     </div>
@@ -618,7 +600,7 @@ export default function EvaluatePage() {
 
       {/* Questions List Modal */}
       {showQuestionsList && (
-        <div className="fixed inset-0 bg-black/60 dark:bg-black/70 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black dark:bg-black flex items-center justify-center p-4 z-50">
           <div className="bg-[--color-card] rounded-lg max-w-4xl w-full max-h-[80vh] border border-[--color-border] shadow-lg text-[--color-foreground]">
             <div className="flex items-center justify-between p-6 border-b border-[--color-border]">
               <h2 className="text-xl font-semibold">Select a Test Question</h2>
@@ -633,6 +615,27 @@ export default function EvaluatePage() {
             </div>
             
             <div className="p-6 overflow-y-auto max-h-[60vh]">
+              {/* Search and filters inside modal */}
+              <div className="flex items-center gap-3 mb-4">
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search questions..."
+                  className="bg-[--color-input] border border-[--color-border]"
+                />
+                <Select value={difficulty} onValueChange={(v) => setDifficulty(v as any)}>
+                  <SelectTrigger className="w-40 bg-[--color-input] border border-[--color-border]">
+                    <SelectValue placeholder="Difficulty" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="easy">Easy</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="hard">Hard</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button type="button" variant="outline" onClick={() => generateNewQuestions('general')}>Generate</Button>
+              </div>
               {loadingNewQuestions || loadingQuestions ? (
                 <div className="text-center py-8">
                   <Loader2 className="mx-auto h-8 w-8 animate-spin text-[--color-muted-foreground] mb-4" />
@@ -664,9 +667,9 @@ export default function EvaluatePage() {
                         >
                           Select
                         </Button>
-                        {question.standard_answers?.length ? (
+                        {(question.standard_answers?.length || 0) > 0 ? (
                           <div className="flex flex-wrap gap-2">
-                            {question.standard_answers.map((ans, idx) => (
+                            {question.standard_answers!.map((ans, idx) => (
                               <Button key={idx} type="button" size="sm" variant="secondary" onClick={() => selectQuestion(question, ans)}>
                                 Autofill GT #{idx + 1}
                               </Button>
