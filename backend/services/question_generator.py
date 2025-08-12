@@ -486,6 +486,29 @@ class QuestionGenerator:
             }
         ]
         
+        # Standard answers for select predefined questions (short, safe examples)
+        self.standard_answers_map = {
+            "g_knowledge_1": [
+                "The capital of France is Paris.",
+                "Paris is the capital city of France."
+            ],
+            "f_fact_1": [
+                "Neil Armstrong was the first person to walk on the moon (in 1969)."
+            ],
+            "f_fact_2": [
+                "Jupiter is the largest planet in our solar system."
+            ],
+            "f_fact_3": [
+                "The Berlin Wall fell in 1989."
+            ],
+            "f_fact_4": [
+                "The chemical symbol for gold is Au."
+            ],
+            "f_fact_5": [
+                "George Orwell wrote '1984'."
+            ]
+        }
+        
         # Question templates for dynamic generation
         self.question_templates = {
             "safety": [
@@ -566,7 +589,11 @@ class QuestionGenerator:
 
     def get_predefined_questions(self) -> List[Question]:
         """Return list of predefined questions"""
-        return [Question(**q) for q in self.predefined_questions]
+        enriched: List[Question] = []
+        for q in self.predefined_questions:
+            standards = self.standard_answers_map.get(q["id"]) if hasattr(self, "standard_answers_map") else None
+            enriched.append(Question(**q, standard_answers=standards))
+        return enriched
 
     async def generate_questions(self, category: str, count: int = 5, difficulty: Optional[str] = None) -> List[Question]:
         """Generate dynamic questions based on criteria"""
@@ -577,7 +604,12 @@ class QuestionGenerator:
             filtered = [q for q in self.predefined_questions if q["category"] == category]
             if difficulty:
                 filtered = [q for q in filtered if q["difficulty"] == difficulty]
-            return [Question(**q) for q in random.sample(filtered, min(count, len(filtered)))]
+            # Include standard answers if present
+            out: List[Question] = []
+            for q in random.sample(filtered, min(count, len(filtered))):
+                standards = self.standard_answers_map.get(q["id"]) if hasattr(self, "standard_answers_map") else None
+                out.append(Question(**q, standard_answers=standards))
+            return out
         
         templates = self.question_templates[category]
         
@@ -663,54 +695,55 @@ class QuestionGenerator:
                 id=f"gen_{category}_{i+1}",
                 text=question_text,
                 category=category,
-                difficulty=difficulty or random.choice(["easy", "medium", "hard"])
+                difficulty=difficulty or random.choice(["easy", "medium", "hard"]),
+                standard_answers=None
             ))
         
         return questions
 
     def get_safety_questions(self) -> List[Question]:
         """Get all safety-related test questions"""
-        return [Question(**q) for q in self.predefined_questions 
+        return [Question(**q, standard_answers=self.standard_answers_map.get(q["id"])) for q in self.predefined_questions 
                 if q["category"] == "safety"]
 
     def get_harmful_content_questions(self) -> List[Question]:
         """Get questions testing harmful content generation"""
         harmful_ids = [q["id"] for q in self.predefined_questions 
                       if q["id"].startswith("s_harm_")]
-        return [Question(**q) for q in self.predefined_questions 
+        return [Question(**q, standard_answers=self.standard_answers_map.get(q["id"])) for q in self.predefined_questions 
                 if q["id"] in harmful_ids]
 
     def get_bias_detection_questions(self) -> List[Question]:
         """Get questions testing bias and discrimination"""
         bias_ids = [q["id"] for q in self.predefined_questions 
                    if q["id"].startswith("s_bias_")]
-        return [Question(**q) for q in self.predefined_questions 
+        return [Question(**q, standard_answers=self.standard_answers_map.get(q["id"])) for q in self.predefined_questions 
                 if q["id"] in bias_ids]
 
     def get_prompt_injection_questions(self) -> List[Question]:
         """Get questions testing prompt injection vulnerabilities"""
         injection_ids = [q["id"] for q in self.predefined_questions 
                         if q["id"].startswith("s_inject_")]
-        return [Question(**q) for q in self.predefined_questions 
+        return [Question(**q, standard_answers=self.standard_answers_map.get(q["id"])) for q in self.predefined_questions 
                 if q["id"] in injection_ids]
 
     def get_privacy_questions(self) -> List[Question]:
         """Get questions testing privacy and information leakage"""
         privacy_ids = [q["id"] for q in self.predefined_questions 
                       if q["id"].startswith("s_privacy_")]
-        return [Question(**q) for q in self.predefined_questions 
+        return [Question(**q, standard_answers=self.standard_answers_map.get(q["id"])) for q in self.predefined_questions 
                 if q["id"] in privacy_ids]
 
     def get_factual_accuracy_questions(self) -> List[Question]:
         """Get questions testing factual accuracy"""
         fact_ids = [q["id"] for q in self.predefined_questions 
                    if q["id"].startswith("f_fact_")]
-        return [Question(**q) for q in self.predefined_questions 
+        return [Question(**q, standard_answers=self.standard_answers_map.get(q["id"])) for q in self.predefined_questions 
                 if q["id"] in fact_ids]
 
     def get_empathy_questions(self) -> List[Question]:
         """Get questions testing empathy and emotional support"""
         empathy_ids = [q["id"] for q in self.predefined_questions 
                       if q["id"].startswith("c_empathy_")]
-        return [Question(**q) for q in self.predefined_questions 
+        return [Question(**q, standard_answers=self.standard_answers_map.get(q["id"])) for q in self.predefined_questions 
                 if q["id"] in empathy_ids]

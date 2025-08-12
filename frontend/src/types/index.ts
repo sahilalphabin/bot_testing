@@ -3,6 +3,7 @@ export interface Question {
   text: string;
   category: 'general' | 'safety' | 'technical' | 'creative';
   difficulty: 'easy' | 'medium' | 'hard';
+  standard_answers?: string[];
 }
 
 export interface EvaluationDetails {

@@ -9,6 +9,7 @@ class QuestionBase(BaseModel):
 
 class Question(QuestionBase):
     id: str
+    standard_answers: Optional[List[str]] = None
 
 class EvaluationRequest(BaseModel):
     question: str

@@ -45,11 +45,13 @@ export function EvaluatorComparisonChart({ evaluations }: EvaluatorComparisonCha
       evaluation: `Eval ${index + 1}`,
       ml_score: evaluation.evaluation_results.ml_score,
       gemini_score: evaluation.evaluation_results.gemini_score,
-      combined_score: evaluation.evaluation_results.combined_score
+      combined_score: evaluation.evaluation_results.combined_score,
+      timestamp: evaluation.timestamp
     }));
   };
 
   const data = getComparisonData().reverse();
+
 
   return (
     <Card className="col-span-2 bg-[--color-card] border border-[--color-border]">
@@ -64,14 +66,42 @@ export function EvaluatorComparisonChart({ evaluations }: EvaluatorComparisonCha
               dataKey="evaluation" 
               stroke="hsl(var(--muted-foreground))"
               fontSize={12}
+              tick={({ x, y, payload }) => (
+                <g>
+                  <text
+                    x={x}
+                    y={y}
+                    dy={16}
+                    textAnchor="middle"
+                    fill="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                  >
+                    {payload.value}
+                  </text>
+                  <text
+                    x={x}
+                    y={y + 28}
+                    textAnchor="middle"
+                    fill="hsl(var(--muted-foreground))"
+                    fontSize={10}
+                  >
+                    {data[payload.index]?.timestamp
+                      ? new Date(data[payload.index].timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+                      : ''}
+                  </text>
+                </g>
+              )}
+              interval={0}
+              height={50}
             />
             <YAxis 
               stroke="hsl(var(--muted-foreground))"
               fontSize={12}
             />
             <Tooltip 
+              cursor={{ stroke: 'transparent' }}
               contentStyle={{
-                backgroundColor: 'hsl(var(--background))',
+                backgroundColor: 'hsl(var(--card))',
                 border: '1px solid hsl(var(--border))',
                 borderRadius: '6px',
                 color: 'hsl(var(--foreground))'

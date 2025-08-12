@@ -26,10 +26,10 @@ export function ToxicityTimeline({ evaluations }: ToxicityTimelineProps) {
             <CartesianGrid strokeDasharray="3 3" className="opacity-30" stroke="hsl(var(--border))" />
             <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
             <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} domain={[0, 100]} />
-            <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))', borderRadius: '6px', color: 'hsl(var(--foreground))' }} />
+            <Tooltip cursor={{ stroke: 'transparent' }} contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '6px', color: 'hsl(var(--foreground))' }} />
             <Legend />
-            <Line type="monotone" dataKey="ml" stroke="#ef4444" name="ML" strokeWidth={2} />
-            <Line type="monotone" dataKey="ai" stroke="#f59e0b" name="AI" strokeWidth={2} />
+            <Line type="monotone" dataKey="ml" stroke="hsl(var(--chart-5))" name="ML" strokeWidth={2} />
+            <Line type="monotone" dataKey="ai" stroke="hsl(var(--chart-3))" name="AI" strokeWidth={2} />
           </LineChart>
         </ResponsiveContainer>
       </CardContent>

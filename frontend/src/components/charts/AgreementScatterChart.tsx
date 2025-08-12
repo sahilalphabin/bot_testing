@@ -15,10 +15,10 @@ interface AgreementScatterChartProps {
 }
 
 const categoryColors = {
-  general: '#8884d8',
-  safety: '#dc2626',
-  technical: '#059669', 
-  creative: '#7c3aed'
+  general: 'hsl(var(--chart-1))',
+  safety: 'hsl(var(--chart-2))',
+  technical: 'hsl(var(--chart-3))', 
+  creative: 'hsl(var(--chart-4))'
 };
 
 export function AgreementScatterChart({ evaluations, title = "ML vs AI Score Agreement" }: AgreementScatterChartProps) {
@@ -111,22 +111,22 @@ export function AgreementScatterChart({ evaluations, title = "ML vs AI Score Agr
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
+        <div className="p-3 rounded-lg shadow-sm" style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))' }}>
           <p className="font-semibold">{data.name}</p>
           <p className="text-sm">
-            <span className="text-blue-600">ML Score:</span> {data.x.toFixed(1)}
+            <span className="text-foreground">ML Score:</span> {data.x.toFixed(1)}
           </p>
           <p className="text-sm">
-            <span className="text-green-600">AI Score:</span> {data.y.toFixed(1)}
+            <span className="text-foreground">AI Score:</span> {data.y.toFixed(1)}
           </p>
           <p className="text-sm">
-            <span className="text-purple-600">Difference:</span> {Math.abs(data.x - data.y).toFixed(1)}
+            <span className="text-foreground">Difference:</span> {Math.abs(data.x - data.y).toFixed(1)}
           </p>
           <p className="text-sm capitalize">
-            <span className="text-gray-600">Category:</span> {data.category}
+            <span className="text-muted-foreground">Category:</span> {data.category}
           </p>
           <p className="text-sm capitalize">
-            <span className="text-gray-600">Difficulty:</span> {data.difficulty}
+            <span className="text-muted-foreground">Difficulty:</span> {data.difficulty}
           </p>
         </div>
       );
@@ -200,7 +200,9 @@ export function AgreementScatterChart({ evaluations, title = "ML vs AI Score Agr
                   domain={[0, 100]}
                   label={{ value: 'AI Score', angle: -90, position: 'insideLeft' }}
                 />
-                {chartConfig.showTooltips && <Tooltip content={<CustomTooltip />} />}
+                {chartConfig.showTooltips && (
+                  <Tooltip cursor={{ stroke: 'transparent', fill: 'hsl(var(--muted))', opacity: 0.15 }} content={<CustomTooltip />} />
+                )}
               
               {/* Perfect agreement line (y=x) */}
               <ReferenceLine 

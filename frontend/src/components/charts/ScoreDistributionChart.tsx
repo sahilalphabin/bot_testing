@@ -51,8 +51,9 @@ export function ScoreDistributionChart({ evaluations }: ScoreDistributionChartPr
 
     return ranges.map(({ range, min, max }) => {
       const count = evaluations.filter(
-        evaluation => evaluation.evaluation_results.combined_score >= min && 
-                     evaluation.evaluation_results.combined_score <= max
+        evaluation => evaluation.evaluation_results?.combined_score !== undefined &&
+                     evaluation.evaluation_results?.combined_score >= min && 
+                     evaluation.evaluation_results?.combined_score <= max
       ).length;
       
       return { range, count };
@@ -80,14 +81,15 @@ export function ScoreDistributionChart({ evaluations }: ScoreDistributionChartPr
               fontSize={12}
             />
             <Tooltip 
+              cursor={{ fill: 'hsl(var(--muted))', opacity: 0.15, stroke: 'transparent' }}
               contentStyle={{
-                backgroundColor: 'hsl(var(--background))',
+                backgroundColor: 'hsl(var(--card))',
                 border: '1px solid hsl(var(--border))',
                 borderRadius: '6px',
                 color: 'hsl(var(--foreground))'
               }}
             />
-            <Bar dataKey="count" fill="hsl(var(--chart-1))" />
+            <Bar dataKey="count" fill="hsl(var(--chart-1))" stroke="transparent" />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

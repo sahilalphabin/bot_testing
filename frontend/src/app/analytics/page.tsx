@@ -195,7 +195,7 @@ export default function AnalyticsDashboard() {
               <TabsContent value="agreement" className="space-y-6">
                 <div className="mb-6">
                   <h3 className="text-xl font-semibold text-foreground">Agreement & Calibration</h3>
-                  <p className="text-muted-foreground">Analyze consistency between ML and Gemini evaluators</p>
+                  <p className="text-muted-foreground">Analyze consistency between ML and AI evaluators</p>
                 </div>
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                   <AgreementScatterChart evaluations={filteredEvaluations} />
@@ -297,7 +297,7 @@ export default function AnalyticsDashboard() {
                                   </Badge>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                  <span className="text-sm">Gemini Only</span>
+                                  <span className="text-sm">AI Only</span>
                                   <Badge variant="outline">
                                     {filteredEvaluations.filter(e => e.evaluation_results.gemini_score !== undefined && e.evaluation_results.ml_score === undefined).length}
                                   </Badge>

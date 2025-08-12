@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Evaluation } from '@/types';
 import { ChartSkeleton } from './ChartSkeleton';
 import { EmptyChart } from './EmptyChart';
@@ -36,11 +37,11 @@ export function EntityConsistencyChart({ evaluations, title = "Entity Consistenc
     .filter(score => score !== undefined && !isNaN(score)) as number[];
 
   const bins = [
-    { range: '0-20', min: 0, max: 20, count: 0, color: '#dc2626' },
-    { range: '20-40', min: 20, max: 40, count: 0, color: '#ea580c' },
-    { range: '40-60', min: 40, max: 60, count: 0, color: '#d97706' },
-    { range: '60-80', min: 60, max: 80, count: 0, color: '#65a30d' },
-    { range: '80-100', min: 80, max: 100, count: 0, color: '#16a34a' },
+    { range: '0-20', min: 0, max: 20, count: 0, color: 'hsl(var(--chart-5))' },
+    { range: '20-40', min: 20, max: 40, count: 0, color: 'hsl(var(--chart-4))' },
+    { range: '40-60', min: 40, max: 60, count: 0, color: 'hsl(var(--chart-3))' },
+    { range: '60-80', min: 60, max: 80, count: 0, color: 'hsl(var(--chart-2))' },
+    { range: '80-100', min: 80, max: 100, count: 0, color: 'hsl(var(--chart-1))' },
   ];
 
   entityScores.forEach(score => {
@@ -89,13 +90,13 @@ export function EntityConsistencyChart({ evaluations, title = "Entity Consistenc
     if (active && payload && payload.length) {
       const data = payload[0];
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
+        <div className="p-3 rounded-lg shadow-sm" style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))' }}>
           <p className="font-semibold">Entity F1 Score: {label}</p>
           <p className="text-sm">
-            <span className="text-blue-600">Count:</span> {data.value}
+            <span className="text-foreground">Count:</span> {data.value}
           </p>
           <p className="text-sm">
-            <span className="text-green-600">Percentage:</span> {
+            <span className="text-foreground">Percentage:</span> {
               entityScores.length > 0 ? ((data.value / entityScores.length) * 100).toFixed(1) : 0
             }%
           </p>
@@ -124,11 +125,11 @@ export function EntityConsistencyChart({ evaluations, title = "Entity Consistenc
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={bins}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="range" />
-                <YAxis />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="range" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <Tooltip cursor={{ fill: 'hsl(var(--muted))', opacity: 0.15, stroke: 'transparent' }} content={<CustomTooltip />} />
+                <Bar dataKey="count" radius={[4, 4, 0, 0]} stroke="transparent">
                   {bins.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
@@ -167,14 +168,7 @@ export function EntityConsistencyChart({ evaluations, title = "Entity Consistenc
                         {item.id.slice(0, 8)}...
                       </td>
                       <td className="p-2">
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                          item.category === 'safety' ? 'bg-red-100 text-red-800' :
-                          item.category === 'technical' ? 'bg-blue-100 text-blue-800' :
-                          item.category === 'creative' ? 'bg-purple-100 text-purple-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
-                          {item.category}
-                        </span>
+                        <Badge variant="secondary" className="capitalize">{item.category}</Badge>
                       </td>
                       <td className="p-2 font-semibold text-red-600">
                         {item.missingCount}

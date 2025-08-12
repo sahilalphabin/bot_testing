@@ -20,7 +20,7 @@ export function RecentEvaluations({ evaluations }: RecentEvaluationsProps) {
   const recentEvaluations = evaluations.slice(0, 5);
 
   return (
-    <Card className="bg-[--color-card] border border-[--color-border]">
+    <Card className="bg-card border border-[--color-border]">
       <CardHeader>
         <CardTitle>Recent Evaluations</CardTitle>
       </CardHeader>
@@ -32,7 +32,7 @@ export function RecentEvaluations({ evaluations }: RecentEvaluationsProps) {
             </p>
           ) : (
             recentEvaluations.map((evaluation) => (
-              <div key={evaluation.id} className="flex items-center justify-between p-3 rounded-lg border border-[--color-border] bg-[--color-card]">
+              <div key={evaluation.id} className="flex items-center justify-between p-3 rounded-lg border border-[--color-border] bg-card">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">
                     {evaluation.question.text}
