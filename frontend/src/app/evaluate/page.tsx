@@ -263,7 +263,7 @@ export default function EvaluatePage() {
                   {questionMode === 'predefined' && (
                     <div className="space-y-3">
                       <div className="flex gap-3">
-                        <Button type="button" variant="outline" onClick={openBrowseQuestions}>
+                        <Button type="button" variant="outline" onClick={openBrowseQuestions} className="bg-[--color-card] border-[--color-border] hover:bg-[--color-secondary]">
                           <Eye className="h-4 w-4 mr-2" />Browse Questions
                         </Button>
                       </div>
@@ -600,7 +600,7 @@ export default function EvaluatePage() {
 
       {/* Questions List Modal */}
       {showQuestionsList && (
-        <div className="fixed inset-0 bg-black dark:bg-black flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black flex items-center justify-center p-4 z-50">
           <div className="bg-[--color-card] rounded-lg max-w-4xl w-full max-h-[80vh] border border-[--color-border] shadow-lg text-[--color-foreground]">
             <div className="flex items-center justify-between p-6 border-b border-[--color-border]">
               <h2 className="text-xl font-semibold">Select a Test Question</h2>
@@ -652,25 +652,26 @@ export default function EvaluatePage() {
                       className="p-4 rounded-lg border border-[--color-border] bg-[--color-card]"
                     >
                       <div className="flex items-start justify-between mb-2">
-                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-[--color-muted] text-[--color-muted-foreground]">
+                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-[--color-secondary] text-[--color-secondary-foreground]">
                           {question.category} • {question.difficulty}
                         </span>
                         <span className="text-xs text-[--color-muted-foreground]">#{index + 1}</span>
                       </div>
-                      <p className="text-sm leading-relaxed mb-3">{question.text}</p>
+                      <p className="text-sm leading-relaxed mb-3 text-[--color-foreground]">{question.text}</p>
                       <div className="flex flex-wrap gap-2">
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
                           onClick={() => selectQuestion(question)}
+                          className="bg-[--color-card] border-[--color-border] hover:bg-[--color-secondary]"
                         >
                           Select
                         </Button>
                         {(question.standard_answers?.length || 0) > 0 ? (
                           <div className="flex flex-wrap gap-2">
                             {question.standard_answers!.map((ans, idx) => (
-                              <Button key={idx} type="button" size="sm" variant="secondary" onClick={() => selectQuestion(question, ans)}>
+                              <Button key={idx} type="button" size="sm" variant="secondary" onClick={() => selectQuestion(question, ans)} className="bg-[--color-secondary] text-[--color-secondary-foreground]">
                                 Autofill GT #{idx + 1}
                               </Button>
                             ))}
