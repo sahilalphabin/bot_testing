@@ -86,8 +86,7 @@ Guidelines:
         try:
             import json
             import re
-            print(f"Gemini response: {response_text}")
-
+            
             json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
             if json_match:
                 json_str = json_match.group()
