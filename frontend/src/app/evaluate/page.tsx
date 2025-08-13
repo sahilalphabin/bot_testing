@@ -415,21 +415,21 @@ export default function EvaluatePage() {
               <div className="space-y-8">
                 {/* Overall Scores */}
                 <div className="grid grid-cols-3 gap-6">
-                  {results.ml_score !== undefined && (
+                  {results.ml_score !== undefined && results.ml_score !== null && (
                     <div className="text-center p-8 bg-[--color-card] rounded-2xl border border-[--color-border]">
                       <div className="text-4xl font-bold mb-2">{results.ml_score.toFixed(1)}</div>
                       <div className="text-sm font-medium text-[--color-muted-foreground]">ML/NLP Score</div>
                     </div>
                   )}
                   
-                  {results.gemini_score !== undefined && (
+                  {results.gemini_score !== undefined && results.gemini_score !== null && (
                     <div className="text-center p-8 bg-[--color-card] rounded-2xl border border-[--color-border]">
                       <div className="text-4xl font-bold mb-2">{results.gemini_score.toFixed(1)}</div>
                       <div className="text-sm font-medium text-[--color-muted-foreground]">AI Score</div>
                     </div>
                   )}
                   
-                  {results.combined_score !== undefined && (
+                  {results.combined_score !== undefined && results.combined_score !== null && (
                     <div className="text-center p-8 bg-[--color-card] rounded-2xl border border-[--color-border]">
                       <div className="text-4xl font-bold mb-2">{results.combined_score.toFixed(1)}</div>
                       <div className="text-sm font-medium text-[--color-muted-foreground]">Combined Score</div>
@@ -600,8 +600,10 @@ export default function EvaluatePage() {
 
       {/* Questions List Modal */}
       {showQuestionsList && (
-        <div className="fixed inset-0 bg-black flex items-center justify-center p-4 z-50">
-          <div className="bg-[--color-card] rounded-lg max-w-4xl w-full max-h-[80vh] border border-[--color-border] shadow-lg text-[--color-foreground]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[--color-background]/80 backdrop-blur-xl" aria-hidden="true"></div>
+          <div className="relative z-10">
+          <div className="bg-[--color-background] rounded-lg max-w-4xl w-full max-h-[80vh] border border-[--color-border] shadow-2xl text-[--color-foreground]">
             <div className="flex items-center justify-between p-6 border-b border-[--color-border]">
               <h2 className="text-xl font-semibold">Select a Test Question</h2>
               <Button
@@ -649,7 +651,7 @@ export default function EvaluatePage() {
                     .map((question, index) => (
                     <div
                       key={question.id}
-                      className="p-4 rounded-lg border border-[--color-border] bg-[--color-card]"
+                      className="p-4 rounded-lg border border-[--color-border] bg-[--color-muted]"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <span className="text-xs font-medium px-2 py-1 rounded-full bg-[--color-secondary] text-[--color-secondary-foreground]">
@@ -664,7 +666,7 @@ export default function EvaluatePage() {
                           variant="outline"
                           size="sm"
                           onClick={() => selectQuestion(question)}
-                          className="bg-[--color-card] border-[--color-border] hover:bg-[--color-secondary]"
+                          className="bg-[--color-muted] border-[--color-border] hover:bg-[--color-secondary]"
                         >
                           Select
                         </Button>
@@ -683,6 +685,7 @@ export default function EvaluatePage() {
                 </div>
               )}
             </div>
+          </div>
           </div>
         </div>
       )}

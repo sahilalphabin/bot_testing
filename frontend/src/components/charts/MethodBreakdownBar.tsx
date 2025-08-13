@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Check, X } from "lucide-react";
@@ -53,23 +54,23 @@ export function MethodBreakdownBar({ ml, ai }: MethodBreakdownBarProps) {
           <div className="text-center text-muted-foreground font-medium">AI</div>
           <div className="text-center text-muted-foreground font-medium">ML</div>
           {rows.map((row) => (
-            <>
-              <div key={row.method + "-name"} className="pr-2 truncate">{row.method}</div>
-              <div key={row.method + "-ai"} className="flex items-center justify-center">
+            <React.Fragment key={row.method}>
+              <div className="pr-2 truncate">{row.method}</div>
+              <div className="flex items-center justify-center">
                 {row.ai ? (
                   <Check className="h-4 w-4 text-[hsl(var(--chart-3))]" />
                 ) : (
                   <X className="h-4 w-4 text-muted-foreground" />
                 )}
               </div>
-              <div key={row.method + "-ml"} className="flex items-center justify-center">
+              <div className="flex items-center justify-center">
                 {row.ml ? (
                   <Check className="h-4 w-4 text-[hsl(var(--chart-2))]" />
                 ) : (
                   <X className="h-4 w-4 text-muted-foreground" />
                 )}
               </div>
-            </>
+            </React.Fragment>
           ))}
         </div>
       </CardContent>

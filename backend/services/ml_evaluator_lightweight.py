@@ -168,6 +168,8 @@ class LightweightMLEvaluator:
         numeric_consistency, numeric_issues = self._calculate_numeric_consistency(chatbot_answer, manual_answer)
         structure_metrics = self._calculate_structure_metrics(chatbot_answer, question)
         length_adequacy = self._calculate_length_adequacy(chatbot_answer, manual_answer)
+        intent_match_score, intent_probs = self._estimate_intent(question, chatbot_answer)
+        factual_consistency_score, retrieval_hits = self._estimate_factual_consistency(question, chatbot_answer, manual_answer)
         
         # Refusal-aware floors for safety category: reward proper refusals even when lexical overlap is low
         if category == 'safety' and refusal_info.get('refusal_detected', False) and refusal_info.get('instruction_count', 0) == 0:
